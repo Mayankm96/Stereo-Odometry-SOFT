@@ -1,9 +1,9 @@
 This repository is an implementation of the [Stereo Odometry based on careful Feature selection
 and Tracking](ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as a part of the course project for [Probabilistic Mobile Robotics](http://home.iitk.ac.in/~gpandey/ee_698g.html).
 
-# [Keypoint Detection](http://mesh.brown.edu/engn1610/szeliski/04-featuredetectionandmatching.pdf)
+# Keypoint Detection
 
-In this section, we split the keypoint detection and matching pipeline into four separate stages:
+In this section, we split the [keypoint detection and matching pipeline](http://mesh.brown.edu/engn1610/szeliski/04-featuredetectionandmatching.pdf) into four separate stages:
 * __feature detection (extraction) stage:__ each image is searched for locations that are likely to match well in other images
 * __feature description stage:__ each region around detected keypoint locations in converted into a more compact and stable (invariant)
 descriptor that can be matched against other descriptors
