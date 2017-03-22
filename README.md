@@ -18,14 +18,14 @@ This part of the algorithm is concerned with finding out the features for the eg
 This process can be broken down into following steps:
 
 1. Extraction of corner- like features in the pair of images at instant t: Blob and corner masks used over the input image
-![Blob and Corner Mask](images/detector-masks.png)
+![Blob and Corner Mask](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/images/detector-masks.PNG)
 
 2. [Non- maximum and non-minimum suppression](https://pdfs.semanticscholar.org/52ca/4ed04d1d9dba3e6ae30717898276735e0b79.pdf) used on the filtered images, producing in feature candidates in either of the following classes: blob max, blob min, corner max, and corner min
 
-3. Correspondences betwen corners found using Sum of Absolute Differences(SAD) over sparse set of pixels, that is given two feature points, we simply compare 1111 block windows of horizontal and vertical Sobel filter responses to each other by using the sum of absolute differences (SAD) error metric. To speed-up matching, we quantize the Sobel responses to 8 bits and sum the differences over a sparse set of 16 locations instead of summing over the whole block window
+3. Correspondences betwen corners found using Sum of Absolute Differences(SAD) over sparse set of pixels, that is given two feature points, we simply compare 11x11 block windows of horizontal and vertical Sobel filter responses to each other by using the sum of absolute differences (SAD) error metric. To speed-up matching, we quantize the Sobel responses to 8 bits and sum the differences over a sparse set of 16 locations instead of summing over the whole block window
 
 4. The above step is susceptible to ouliers so circular matching is used to reject them out 
 
-5. If circle matching is successful, normalized cross- correlation (NCC) on 2525 path around feature positions is evaluated to reject outliers
+5. If circle matching is successful, normalized cross- correlation (NCC) on 25x25 path around feature positions is evaluated to reject outliers
 
 6. Finally RANSAC is implemented to reject remaining outliers, using epipolar constraints.
