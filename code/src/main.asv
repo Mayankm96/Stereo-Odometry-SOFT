@@ -44,6 +44,7 @@ pts1_r=detectFASTFeatures(I1_r);
 pts2_l=detectFASTFeatures(I2_l);
 pts2_r=detectFASTFeatures(I2_r);
 
+
 [features1_l,valid_points1_l] = extractFeatures(I1_l,pts1_l);
 [features1_r,valid_points1_r] = extractFeatures(I1_r,pts1_r);
 [features2_l,valid_points2_l] = extractFeatures(I2_l,pts2_l);
@@ -51,29 +52,15 @@ pts2_r=detectFASTFeatures(I2_r);
 
 %% Circular matching
 % compare left frame at t+1 with left frame at t
-inPair = matchFeatures(features2_l,features1_l,'Metric','SAD');
+inPair = matchFeatures(features2_l,features1_l);
 matchedPoints = valid_points1_l(inPair(:,2),:);
-
-[features2_l,valid_points2_l] = extractFeatures(I2_l,valid_points2_l(inPair(:,1),:));
 [features1_l,valid_points1_l] = extractFeatures(I1_l,matchedPoints);
 
-% compare left frame at t with right frame at t
-inPair = matchFeatures(features1_l,features1_r,'Metric','SAD');
+% compare right frame at t+1 with left frame at t
+inPair = matchFeatures(features1_l,features1_r);
 matchedPoints = valid_points1_r(inPair(:,2),:);
 
-[features1_r,valid_points1_r] = extractFeatures(I1_r,matchedPoints);
 
-% compare right frame at t with right frame at t+1
-inPair = matchFeatures(features1_r,features2_r,'Metric','SAD');
-matchedPoints = valid_points2_r(inPair(:,2),:);
-
-[features2_r,valid_points2_r] = extractFeatures(I2_r,matchedPoints);
-
-% compare right frame at t+1 with left frame at t+1
-inPair = matchFeatures(features2_r,features2_l,'Metric','SAD');
-matchedPoints = valid_points2_l(inPair(:,2),:);
-
-[features2_l,valid_points2_l] = extractFeatures(I2_l,matchedPoints);
 
 %% Plot the odometry transformed data
 %pos = pos + Rpos*t;
