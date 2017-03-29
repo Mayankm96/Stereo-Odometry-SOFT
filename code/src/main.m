@@ -2,7 +2,7 @@ clc
 clear
 close all
 
-%% read calibration parameters P1 and P2 
+%% Read calibration parameters P1 and P2 
 calibname = '../data/calib.txt';
 T = readtable(calibname, 'Delimiter', 'space', 'ReadRowNames', true, 'ReadVariableNames', false);
 A = table2array(T);
@@ -19,12 +19,12 @@ P2 = vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
 pos=[0;0;0];
 Rpos=eye(3);
 
-path1='../data/DataSet1/image_00/data/0000000';
-path2='../data/DataSet1/image_01/data/0000000';
+path1='../data/DataSet1/image_00/data/000000';
+path2='../data/DataSet1/image_01/data/000000';
 
-%% read images
+%% Read images
  
-i=0;
+i=2;
 dig1=imval2str(i);
 dig2=imval2str(i+1);
 
@@ -33,47 +33,91 @@ I1_r = imread(strcat(path2,dig1,'.png'));
 I2_l = imread(strcat(path1,dig2,'.png'));
 I2_r = imread(strcat(path2,dig2,'.png'));
 
+%% Feature Tracking at time instant t
+% In ouur implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm
+% to track the features in the left camera at time instant t
 
-%% feature points extraction- preprocessing stage
-% In the original paper filter masks followed by Non- Maximal Suppresion is
-% used to detect the features. However, since the FAST algorithm works well
+pts1_l=detectMinEigenFeatures(I1_l,'FilterSize',5,'MinQuality',0);
+tracker = vision.PointTracker('MaxBidirectionalError', 1);
+initialize(tracker, pts1_l.Location, I1_l);
+[pts2_l, validity] = step(tracker, I2_l);
+
+pts1_l(validity(:)==0,:) = [];
+pts2_l(validity(:)==0,:) = [];
+pts2_l=cornerPoints(pts2_l);
+
+%% Feature points extraction
+% In the original paper, filter masks followed by Non- Maximal Suppresion are
+% used to detect the features. However, since the MinEigen algorithm works well
 % for feature detection we have used its MATLAB implementation directly.
 
-pts1_l=detectFASTFeatures(I1_l);
-pts1_r=detectFASTFeatures(I1_r);
-pts2_l=detectFASTFeatures(I2_l);
-pts2_r=detectFASTFeatures(I2_r);
+pts1_r=detectMinEigenFeatures(I1_r,'FilterSize',5,'MinQuality',0);
+pts2_r=detectMinEigenFeatures(I2_r,'FilterSize',5,'MinQuality',0);
 
-[features1_l,valid_points1_l] = extractFeatures(I1_l,pts1_l);
-[features1_r,valid_points1_r] = extractFeatures(I1_r,pts1_r);
-[features2_l,valid_points2_l] = extractFeatures(I2_l,pts2_l);
-[features2_r,valid_points2_r] = extractFeatures(I2_r,pts2_r);
+[features1_l,pts1_l] = extractFeatures(I1_l,pts1_l);
+[features1_r,pts1_r] = extractFeatures(I1_r,pts1_r);
+[features2_l,pts2_l] = extractFeatures(I2_l,pts2_l);
+[features2_r,pts2_r] = extractFeatures(I2_r,pts2_r);
+
+figure;
+imshow(I2_l);
+hold on
+%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
 
 %% Circular matching
-% compare left frame at t+1 with left frame at t
-inPair = matchFeatures(features2_l,features1_l,'Metric','SAD');
-matchedPoints = valid_points1_l(inPair(:,2),:);
+% In the original paper, sparse SAD circular matching has been done.
+% However, to simplify the implementation of visual odometry we have
+% done circular matching directly using the matchFeatures function in 
+% MATLAB over Binary Features. 
 
-[features2_l,valid_points2_l] = extractFeatures(I2_l,valid_points2_l(inPair(:,1),:));
-[features1_l,valid_points1_l] = extractFeatures(I1_l,matchedPoints);
+% compare left frame at t with left frame at t-1
+inPair = matchFeatures(features2_l,features1_l);
+matchedPoints_l = pts1_l(inPair(:,2),:);
 
-% compare left frame at t with right frame at t
-inPair = matchFeatures(features1_l,features1_r,'Metric','SAD');
-matchedPoints = valid_points1_r(inPair(:,2),:);
+[features2_l,pts2_l] = extractFeatures(I2_l,pts2_l(inPair(:,1),:));
+[features1_l,pts1_l] = extractFeatures(I1_l,matchedPoints_l);
 
-[features1_r,valid_points1_r] = extractFeatures(I1_r,matchedPoints);
+% compare left frame at t-1 with right frame at t-1
+inPair = matchFeatures(features1_l,features1_r);
+matchedPoints_l = pts1_r(inPair(:,2),:);
 
-% compare right frame at t with right frame at t+1
-inPair = matchFeatures(features1_r,features2_r,'Metric','SAD');
-matchedPoints = valid_points2_r(inPair(:,2),:);
+[features1_r,pts1_r] = extractFeatures(I1_r,matchedPoints_l);
 
-[features2_r,valid_points2_r] = extractFeatures(I2_r,matchedPoints);
+% compare right frame at t-1 with right frame at t
+inPair = matchFeatures(features1_r,features2_r);
+matchedPoints_l = pts2_r(inPair(:,2),:);
 
-% compare right frame at t+1 with left frame at t+1
-inPair = matchFeatures(features2_r,features2_l,'Metric','SAD');
-matchedPoints = valid_points2_l(inPair(:,2),:);
+[features2_r,pts2_r] = extractFeatures(I2_r,matchedPoints_l);
 
-[features2_l,valid_points2_l] = extractFeatures(I2_l,matchedPoints);
+% compare right frame at t with left frame at t
+inPair = matchFeatures(features2_r,features2_l);
+matchedPoints_l = pts2_l(inPair(:,2),:);
+
+[~,pts2_l] = extractFeatures(I2_l,matchedPoints_l);
+
+%% Normalized Cross Coorelation to match features
+
+%% Feature Selection using bucketing
+bucketSize=50;
+numCorners=2;
+
+%hold on
+scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
+pts2_l=bucketFeatures(I2_l,pts2_l,bucketSize,numCorners);
+scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
+
+%% Feature Matching to get corresponding points at time instant t
+[features2_l,pts2_l] = extractFeatures(I2_l,pts2_l);
+[features2_r,pts2_r] = extractFeatures(I2_r,pts2_r);
+inPair = matchFeatures(features2_r,features2_l);
+matchedPoints_r = pts2_r(inPair(:,1),:);
+matchedPoints_l = pts2_l(inPair(:,2),:);
+[~,pts2_r] = extractFeatures(I2_r,matchedPoints_r);
+[~,pts2_l] = extractFeatures(I2_l,matchedPoints_l);
+
+figure; showMatchedFeatures(I2_l, I2_r, pts2_l, pts2_r);
+
+%% Egomotion Estimation
 
 %% Plot the odometry transformed data
 %pos = pos + Rpos*t;
