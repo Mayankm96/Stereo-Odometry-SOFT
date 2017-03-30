@@ -1,11 +1,15 @@
 function points3D = gen3dPoints(pts_l,pts_r,Pl,Pr)
-%%Given matched points in the left and right frames of the stero system, and 
+%%Given matched points in the left and right frames of the stereo system, and 
 % projection matrices for each camera, a 3D point cloud is generated.
 %   pts_l: matched feature points locations in left camera frame
 %   pts_r: matched feature points locations in right camera frame
 %   Pl, Pr - 3x4 Projection matrices for left and right cameras respectively
 
-% store homogeneous world coordinates
+% Writing image coordinates in homogenous form
+pts_l = pts_l.Location'; 
+pts_r = pts_r.Location'; 
+
+% initializing homogeneous world coordinates
 points3D = ones(size(pts_l,1),4); 
 
 for i = 1:size(pts_l,1)
