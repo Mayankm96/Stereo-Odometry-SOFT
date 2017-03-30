@@ -34,7 +34,7 @@ I2_l = imread(strcat(path1,dig2,'.png'));
 I2_r = imread(strcat(path2,dig2,'.png'));
 
 %% Feature Tracking at time instant t
-% In ouur implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm
+% In our implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm
 % to track the features in the left camera at time instant t
 
 pts1_l=detectMinEigenFeatures(I1_l,'FilterSize',5,'MinQuality',0);
