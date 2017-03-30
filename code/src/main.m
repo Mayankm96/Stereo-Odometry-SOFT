@@ -3,17 +3,17 @@ clear
 close all
 
 %% Read calibration parameters P1 and P2 
-calibname = '../data/calib.txt';
-T = readtable(calibname, 'Delimiter', 'space', 'ReadRowNames', true, 'ReadVariableNames', false);
-A = table2array(T);
+%calibname = '../data/calib.txt';
+%T = readtable(calibname, 'Delimiter', 'space', 'ReadRowNames', true, 'ReadVariableNames', false);
+%A = table2array(T);
  
-P1 = vertcat(A(1,1:4), A(1,5:8), A(1,9:12));
-P2 = vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
+%P1 = vertcat(A(1,1:4), A(1,5:8), A(1,9:12));
+%P2 = vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
 
-%A1=[7.215377e+02 0.000000e+00 6.095593e+02 0.000000e+00 0.000000e+00 7.215377e+02 1.728540e+02 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00];
-%A2=[7.215377e+02 0.000000e+00 6.095593e+02 -3.875744e+02 0.000000e+00 7.215377e+02 1.728540e+02 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00];
-%P1=vertcat(A(1,1:4), A(1,5:8), A(1,9:12));
-%P2=vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
+A = [[9.842439e+02 0.000000e+00 6.900000e+02 0.000000e+00 9.808141e+02 2.331966e+02 0.000000e+00 0.000000e+00 1.000000e+00]; ...
+     [9.895267e+02 0.000000e+00 7.020000e+02 0.000000e+00 9.878386e+02 2.455590e+02 0.000000e+00 0.000000e+00 1.000000e+00]];
+K1=vertcat(A(1,1:3), A(1,4:6), A(1,7:9));
+K2=vertcat(A(2,1:3), A(2,4:6), A(2,7:9));
 
 %% Initialize variables
 pos = [0;0;0];
@@ -59,10 +59,10 @@ pts2_r=detectMinEigenFeatures(I2_r,'FilterSize',5,'MinQuality',0);
 [features2_l,pts2_l] = extractFeatures(I2_l,pts2_l);
 [features2_r,pts2_r] = extractFeatures(I2_r,pts2_r);
 
-figure;
-imshow(I2_l);
-hold on
-scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
+%figure;
+%imshow(I2_l);
+%hold on
+%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
 
 %% Circular matching
 % In the original paper, sparse SAD circular matching has been done.
@@ -101,23 +101,25 @@ bucketSize = 50;
 numCorners = 3;
 
 %hold on
-scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
-pts2_l = bucketFeatures(I2_l,pts2_l,bucketSize,numCorners);
-scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
+%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
+%pts2_l = bucketFeatures(I2_l,pts2_l,bucketSize,numCorners);
+%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
 
 %% Feature Matching to get corresponding points at time instant t and t-1 in left camera
 [features2_l,pts2_l] = extractFeatures(I2_l,pts2_l);
 [features1_l,pts1_l] = extractFeatures(I1_l,pts1_l);
 inPair = matchFeatures(features1_l,features2_l);
-matchedPoints1_l = pts1_l(inPair(:,1),:);
-matchedPoints2_l = pts2_l(inPair(:,2),:);
-[~,pts1_l] = extractFeatures(I1_l,matchedPoints1_l);
-[~,pts2_l] = extractFeatures(I2_l,matchedPoints2_l);
 
-figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
+[~,pts1_l] = extractFeatures(I1_l,pts1_l(inPair(:,1),:));
+[~,pts2_l] = extractFeatures(I2_l,pts2_l(inPair(:,2),:));
 
-%% Roatation Estimation using Nister's Algorithm
-[E_all, R_all, t_all, Eo_all] = fivePointAlgorithm(pts1_l, pts2_l, P1, P2 );
+%figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
+
+%% Rotation Estimation using Nister's Algorithm
+pts1_l = pts1_l.Location'; 
+pts2_l = pts2_l.Location'; 
+
+[E_all, R_all, t_all, Eo_all] = fivePointAlgorithm(pts1_l(:,1:5), pts2_l(:,1:5), K1, K2 );
 
 %% Plot the odometry transformed data
 %pos = pos + Rpos*t;
