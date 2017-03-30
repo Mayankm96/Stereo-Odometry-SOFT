@@ -24,7 +24,7 @@ path2='../data/DataSet1/image_01/data/000000';
 
 %% Read images
  
-i=2;
+i=0;
 dig1=imval2str(i);
 dig2=imval2str(i+1);
 
@@ -65,7 +65,7 @@ pts2_r=detectMinEigenFeatures(I2_r,'FilterSize',5,'MinQuality',0);
 %scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
 
 %% Circular matching
-% In the original paper, sparse SAD circular matching has been done.
+% In the original paper, sparse SSD circular matching has been done.
 % However, to simplify the implementation of visual odometry we have
 % done circular matching directly using the matchFeatures function in 
 % MATLAB over Binary Features. 
@@ -94,8 +94,6 @@ inPair = matchFeatures(features2_r,features2_l);
 [~,pts2_r] = extractFeatures(I2_r,pts2_r(inPair(:,1),:));
 [~,pts2_l] = extractFeatures(I2_l,pts2_l(inPair(:,2),:));
 
-%% Normalized Cross Coorelation to match features
-
 %% Feature Selection using bucketing
 bucketSize = 50;
 numCorners = 3;
@@ -116,11 +114,40 @@ inPair = matchFeatures(features1_l,features2_l);
 %figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
 
 %% Rotation Estimation using Nister's Algorithm
-pts1_l = pts1_l.Location'; 
-pts2_l = pts2_l.Location'; 
 
-[E_all, R_all, t_all, Eo_all] = fivePointAlgorithm(pts1_l(:,1:5), pts2_l(:,1:5), K1, K2 );
+% Writing image coordinates in homogenous form
+pts1_l = [pts1_l.Location'; ones(1,length(pts1_l))]; 
+pts2_l = [pts2_l.Location'; ones(1,length(pts2_l))]; 
+numPoints = length(pts1_l(1,:));
 
+%Implement RANSAC algorithm to exclude outliers
+%   s: smallest number of points required to fit the model
+%   N: Number of iterations required to find model using RANSAC
+%   w: Percentage number of inliers desired 
+%   p: Accuracy in fitted line desired
+s = 5;
+w = 0.9;
+p = 0.9999;
+N = floor(log(1-p)/log(1-w^s));
+
+minError=1000;
+for i = 1:N
+    sample = randperm(numPoints, 5);
+    [E_all,R_all,~,~] = fivePointAlgorithm(pts1_l(:,sample), pts2_l(:,sample), K1, K1 );
+    error = zeros(1,size(E_all,1));
+    
+    % Reprojection Error
+    for j = 1:size(E_all,1)
+        for k = 1:numPoints
+            error(j) = error(j) + pts2_l(:,k)'*inv(K1)'*E_all{j}*inv(K1)*pts1_l(:,k);
+        end
+    end
+    [~,index] = min(abs(error));
+    if error(index) < minError
+        R = R_all{index};
+        minError=error(index);
+    end
+end
 %% Plot the odometry transformed data
 %pos = pos + Rpos*t;
 %Rpos = R*Rpos;

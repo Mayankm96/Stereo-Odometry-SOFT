@@ -1,5 +1,5 @@
 function [E_all, R_all, t_all, Eo_all] = fivePointAlgorithm( pts1, pts2, K1, K2 )
-%fivePointAlgorithm Given five points matches between two images, and the
+% Five Point Algorithm:Given five points matches between two images, and the
 % intrinsic parameters of each camera. Estimate the essential matrix E, the 
 % rotation matrix R and translation vector t, between both images. This 
 % algorithm is based on the method described by David Nister in "An 
@@ -22,7 +22,7 @@ function [E_all, R_all, t_all, Eo_all] = fivePointAlgorithm( pts1, pts2, K1, K2 
 %
 %
 % Arguments:
-% pts1, pts2 - assumed to have dimension 2x5 and of equal size. 
+% pts1, pts2 - assumed to have dimension 3x5 and of equal size. 
 % K1, K2 - 3x3 intrinsic parameters of cameras 1 and 2 respectively
 %
 % Know Issues:
@@ -35,17 +35,16 @@ function [E_all, R_all, t_all, Eo_all] = fivePointAlgorithm( pts1, pts2, K1, K2 
 % Repo: https://github.com/SergioRAgostinho/fivePointAlgorithm
 % Feel free to provide feedback or contribute.
 
-if ~all(size(pts1) == [2,5]) || ~all(size(pts2) == [2,5])
-    error('fivePointAlgorithm:wrong_dimensions','pts1 and pts2 must be of size 2x5');
+if ~all(size(pts1) == [3,5]) || ~all(size(pts2) == [3,5])
+    error('fivePointAlgorithm:wrong_dimensions','pts1 and pts2 must be of size 3x5');
 end
 
 if ~all(size(K1) == [3, 3]) || ~all(size(K2) == [3, 3])
     error('fivePointAlgorithm:wrong_dimensions','K1 and K2 must be of size 3x3');
 end
 
-N = 5;
-q1 = K1 \ [pts1; ones(1,N)];
-q2 = K2 \ [pts2; ones(1,N)];
+q1 = K1 \ pts1;
+q2 = K2 \ pts2;
 
 q = [q1(1,:)'.* q2(1,:)', q1(2,:)'.* q2(1,:)', q1(3,:)'.* q2(1,:)', ...
      q1(1,:)'.* q2(2,:)', q1(2,:)'.* q2(2,:)', q1(3,:)'.* q2(2,:)', ...
