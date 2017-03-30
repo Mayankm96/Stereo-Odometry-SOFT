@@ -16,8 +16,8 @@ P2 = vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
 %P2=vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
 
 %% Initialize variables
-pos=[0;0;0];
-Rpos=eye(3);
+pos = [0;0;0];
+Rpos = eye(3);
 
 path1='../data/DataSet1/image_00/data/000000';
 path2='../data/DataSet1/image_01/data/000000';
@@ -62,7 +62,7 @@ pts2_r=detectMinEigenFeatures(I2_r,'FilterSize',5,'MinQuality',0);
 figure;
 imshow(I2_l);
 hold on
-%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
+scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+b');
 
 %% Circular matching
 % In the original paper, sparse SAD circular matching has been done.
@@ -72,52 +72,52 @@ hold on
 
 % compare left frame at t with left frame at t-1
 inPair = matchFeatures(features2_l,features1_l);
-matchedPoints_l = pts1_l(inPair(:,2),:);
 
 [features2_l,pts2_l] = extractFeatures(I2_l,pts2_l(inPair(:,1),:));
-[features1_l,pts1_l] = extractFeatures(I1_l,matchedPoints_l);
+[features1_l,pts1_l] = extractFeatures(I1_l,pts1_l(inPair(:,2),:));
 
 % compare left frame at t-1 with right frame at t-1
 inPair = matchFeatures(features1_l,features1_r);
-matchedPoints_l = pts1_r(inPair(:,2),:);
 
-[features1_r,pts1_r] = extractFeatures(I1_r,matchedPoints_l);
+[~,pts1_l] = extractFeatures(I1_l,pts1_l(inPair(:,1),:));
+[features1_r,pts1_r] = extractFeatures(I1_r,pts1_r(inPair(:,2),:));
 
 % compare right frame at t-1 with right frame at t
 inPair = matchFeatures(features1_r,features2_r);
-matchedPoints_l = pts2_r(inPair(:,2),:);
 
-[features2_r,pts2_r] = extractFeatures(I2_r,matchedPoints_l);
+[~,pts1_r] = extractFeatures(I1_r,pts1_r(inPair(:,1),:));
+[features2_r,pts2_r] = extractFeatures(I2_r,pts2_r(inPair(:,2),:));
 
 % compare right frame at t with left frame at t
 inPair = matchFeatures(features2_r,features2_l);
-matchedPoints_l = pts2_l(inPair(:,2),:);
 
-[~,pts2_l] = extractFeatures(I2_l,matchedPoints_l);
+[~,pts2_r] = extractFeatures(I2_r,pts2_r(inPair(:,1),:));
+[~,pts2_l] = extractFeatures(I2_l,pts2_l(inPair(:,2),:));
 
 %% Normalized Cross Coorelation to match features
 
 %% Feature Selection using bucketing
-bucketSize=50;
-numCorners=2;
+bucketSize = 50;
+numCorners = 3;
 
 %hold on
 scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
-pts2_l=bucketFeatures(I2_l,pts2_l,bucketSize,numCorners);
+pts2_l = bucketFeatures(I2_l,pts2_l,bucketSize,numCorners);
 scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
 
-%% Feature Matching to get corresponding points at time instant t
+%% Feature Matching to get corresponding points at time instant t and t-1 in left camera
 [features2_l,pts2_l] = extractFeatures(I2_l,pts2_l);
-[features2_r,pts2_r] = extractFeatures(I2_r,pts2_r);
-inPair = matchFeatures(features2_r,features2_l);
-matchedPoints_r = pts2_r(inPair(:,1),:);
-matchedPoints_l = pts2_l(inPair(:,2),:);
-[~,pts2_r] = extractFeatures(I2_r,matchedPoints_r);
-[~,pts2_l] = extractFeatures(I2_l,matchedPoints_l);
+[features1_l,pts1_l] = extractFeatures(I1_l,pts1_l);
+inPair = matchFeatures(features1_l,features2_l);
+matchedPoints1_l = pts1_l(inPair(:,1),:);
+matchedPoints2_l = pts2_l(inPair(:,2),:);
+[~,pts1_l] = extractFeatures(I1_l,matchedPoints1_l);
+[~,pts2_l] = extractFeatures(I2_l,matchedPoints2_l);
 
-figure; showMatchedFeatures(I2_l, I2_r, pts2_l, pts2_r);
+figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
 
-%% Egomotion Estimation
+%% Roatation Estimation using Nister's Algorithm
+[E_all, R_all, t_all, Eo_all] = fivePointAlgorithm(pts1_l, pts2_l, P1, P2 );
 
 %% Plot the odometry transformed data
 %pos = pos + Rpos*t;
