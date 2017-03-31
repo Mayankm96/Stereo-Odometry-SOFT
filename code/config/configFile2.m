@@ -1,4 +1,4 @@
-%%% Configuration File
+%%% Configuration File for visualSOFT
 %%% Permits various adjustments to parameters of the Visual Odometry Algorithm
 
 %% Read the calibration file to find parameters of the cameras 
@@ -13,18 +13,6 @@ A = [[9.842439e+02 0.000000e+00 6.900000e+02 0.000000e+00 9.808141e+02 2.331966e
      [9.895267e+02 0.000000e+00 7.020000e+02 0.000000e+00 9.878386e+02 2.455590e+02 0.000000e+00 0.000000e+00 1.000000e+00]];
 K1 = vertcat(A(1,1:3), A(1,4:6), A(1,7:9));
 K2 = vertcat(A(2,1:3), A(2,4:6), A(2,7:9));
-
-%% Path to the directories containing images
-path1 = '../data/DataSet1/image_00/data/';
-path2 = '../data/DataSet1/image_01/data/';
-
-% Number of images in the dataset
-Files = dir(strcat(path1,'*.png'));
-NumDataSet = length(Files);
-
-% File name style of images stored in the directories
-style = Files(1).name;
-style = style(style=='0');
 
 %% Paramters for Feature Selection using bucketing
 bucketSize = 50; % Size of each bucket
