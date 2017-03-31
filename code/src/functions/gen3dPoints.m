@@ -5,7 +5,7 @@ function points3D = gen3dPoints(pts_l,pts_r,Pl,Pr)
 %   pts_r: matched feature points locations in right camera frame
 %   Pl, Pr - 3x4 Projection matrices for left and right cameras respectively
 
-% Writing image coordinates in homogenous form
+% Retrieving image coordinates from datatype cornerPoints
 pts_l = pts_l.Location'; 
 pts_r = pts_r.Location'; 
 

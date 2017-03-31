@@ -83,17 +83,21 @@ for i = 0: (NumDataSet-1)
     %% Translation Estimation by minimizing Reprojection Error
     %%3D Point Cloud generation at time t-1 using Triangulation
     [pts1_l, pts1_r] = matchFeaturePoints(I1_l, I1_r, pts1_l, pts1_r);
-    points3D_1 = gen3dPoints(pts1_l, pts1_r, P1, P2);
+    %points3D_1 = gen3dPoints(pts1_l, pts1_r, P1, P2);
     
     %%3D Point Cloud generation at time t-1 using Triangulation
     [pts2_l, pts2_r] = matchFeaturePoints(I2_l, I2_r, pts2_l, pts2_r);
-    points3D_2 = gen3dPoints(pts2_l, pts2_r, P1, P2);
+    points3D_2 = gen3dPoints(pts2_l, pts2_r, P1, P2)';
+    
+    t=zeros(3,1);
+    reprojError=@(t)reprojectenError(R, t, K1, K2, points3D_2, pts2_l, pts2_r);
+    t=fminunc(reprojError,t);
 
     %% Plot the odometry transformed data
-    %pos = pos + Rpos*t;
-    %Rpos = R*Rpos;
-    %plot(pos(1),pos(2),'ob');
-    %hold on;
-    %pause(0.005);
+    pos = pos + Rpos*t;
+    Rpos = R*Rpos;
+    plot(pos(1),pos(3),'ob');
+    hold on;
+    pause(0.005);
 end
 toc
