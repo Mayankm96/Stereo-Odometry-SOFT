@@ -2,10 +2,11 @@
 %%% Permits various adjustments to parameters of the Visual Odometry Algorithm
 
 %% Read the calibration file to find parameters of the cameras 
-calibname = fullfile('../data/calib.txt');
-T = readtable(calibname, 'Delimiter', 'space', 'ReadRowNames', true, 'ReadVariableNames', false);
-A = table2array(T);
- 
+%calibname = fullfile('../data/calib.txt');
+%T = readtable(calibname, 'Delimiter', 'space', 'ReadRowNames', true, 'ReadVariableNames', false);
+%A = table2array(T);
+A=[[7.215377e+02 0.000000e+00 6.095593e+02 0.000000e+00 0.000000e+00 7.215377e+02 1.728540e+02 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00];
+    [7.215377e+02 0.000000e+00 6.095593e+02 -3.875744e+02 0.000000e+00 7.215377e+02 1.728540e+02 0.000000e+00 0.000000e+00 0.000000e+00 1.000000e+00 0.000000e+00]]; 
 P1 = vertcat(A(1,1:4), A(1,5:8), A(1,9:12));
 P2 = vertcat(A(2,1:4), A(2,5:8), A(2,9:12));
 

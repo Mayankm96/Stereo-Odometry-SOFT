@@ -6,8 +6,8 @@ function points3D = gen3dPoints(pts_l,pts_r,Pl,Pr)
 %   Pl, Pr - 3x4 Projection matrices for left and right cameras respectively
 
 % Retrieving image coordinates from datatype cornerPoints
-pts_l = pts_l.Location'; 
-pts_r = pts_r.Location'; 
+pts_l = pts_l.Location; 
+pts_r = pts_r.Location; 
 
 % initializing homogeneous world coordinates
 points3D = ones(size(pts_l,1),4); 
@@ -32,6 +32,6 @@ for i = 1:size(pts_l,1)
     points3D(i,:) = X';
 
 end
-points3D = points3D(:,1:3);
+points3D = points3D(:,1:3)';
 end
 

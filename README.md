@@ -24,7 +24,7 @@ This process can be broken down into following steps:
 
 3. Correspondences betwen corners found using Sum of Absolute Differences(SAD) over sparse set of pixels, that is given two feature points, we simply compare 11x11 block windows of horizontal and vertical Sobel filter responses to each other by using the sum of absolute differences (SAD) error metric. To speed-up matching, we quantize the Sobel responses to 8 bits and sum the differences over a sparse set of 16 locations instead of summing over the whole block window
 
-4. The above step is susceptible to ouliers so circular matching is used to reject them ou
+4. The above step is susceptible to ouliers so circular matching is used to reject them.
 
 ## Feature Selection
 
