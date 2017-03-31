@@ -44,3 +44,6 @@ In our implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm to t
 
 We have used [Nister's Five Point Algorithm](http://ieeexplore.ieee.org/document/1288525/) in conjuction with RANSAC to find the best estimate of our rotation matric. The procedure used is similar to that useed to estimate structutre from motion using monocular vision.
 
+## Translation Estimation
+
+We build a 3D point cloud using triangulation from the previous view (i.e. at time t-1) and reproject it onto the current image frame (i.e. at time t). The reprojection error function is then minimized with respect to translation, to estimate the translation vecto
