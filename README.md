@@ -40,7 +40,7 @@ In our implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm to t
 
 # Egomotion Estimation
 
-## Rotaion Estimation
+## Rotation Estimation
 
 We have used [Nister's Five Point Algorithm](http://ieeexplore.ieee.org/document/1288525/) in conjuction with RANSAC to find the best estimate of our rotation matric. The procedure used is similar to that useed to estimate structutre from motion using monocular vision.
 
