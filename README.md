@@ -38,6 +38,8 @@ In above image, the crosses are all the features detected using minimum eigenval
 
 In our implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm to track the features in the left camera at time instant t.
 
+# Egomotion Estimation
+
 ## Rotaion Estimation
 
 We have used [Nister's Five Point Algorithm](http://ieeexplore.ieee.org/document/1288525/) in conjuction with RANSAC to find the best estimate of our rotation matric. The procedure used is similar to that useed to estimate structutre from motion using monocular vision.
