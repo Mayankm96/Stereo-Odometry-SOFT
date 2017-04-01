@@ -11,7 +11,7 @@ pos = [0;0;0];
 Rpos = eye(3);
 
 %% Start Algorithm
-for t = 1: NumDataSet
+for t = 5: NumDataSet
     %% Implement SOFT for time instant i. Previous frame at time instant t-1
     tic;
     [R, tr] = visualSOFT(t, path1, path2, style);
@@ -20,7 +20,7 @@ for t = 1: NumDataSet
     %% Plot the odometry transformed data
     pos = pos + Rpos*tr;
     Rpos = R*Rpos;
-    plot(pos(1),pos(3),'ob');
+    scatter(pos(1),pos(3),'b','filled');
     hold on;
     pause(0.005);
 end
