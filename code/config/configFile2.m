@@ -17,7 +17,7 @@ K2 = vertcat(A(2,1:3), A(2,4:6), A(2,7:9));
 
 %% Paramters for Feature Selection using bucketing
 bucketSize = 50; % Size of each bucket
-numCorners = 3;  % Maximum Number of features to be selected from each bucket
+numCorners = 2;  % Maximum Number of features to be selected from each bucket
 
 %% Paramters for RANSAC algorithm to exclude outliers during rotation estimation 
 s = 15; % smallest number of points required to fit the model

@@ -18,9 +18,11 @@ for t = 1: NumDataSet
     toc
 
     %% Plot the odometry transformed data
+    subplot(3,1,3);
     pos = pos + Rpos*tr;
     Rpos = R*Rpos;
     scatter(pos(1),pos(3),'b','filled');
     hold on;
+    title(sprintf('Odometry plot at frame %d', t))
     pause(0.005);
 end

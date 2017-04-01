@@ -9,6 +9,6 @@ function points3D = gen3dPoints(pts_l,pts_r,Pl,Pr)
 pts_l = pts_l.Location; 
 pts_r = pts_r.Location; 
 
-points3D = trinagulate(pts_l, pts_r, Pl', Pr');
+points3D = triangulate(pts_l, pts_r, Pl', Pr')';
 end
 

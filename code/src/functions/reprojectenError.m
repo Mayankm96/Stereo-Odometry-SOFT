@@ -13,10 +13,9 @@ points3D = [points3D; ones(1,length(points3D(1,:)))];
 pts_l = pts_l.Location';  
 pts_r = pts_r.Location';
 
-s = 5;
 % Homogenous coordinates projection on camera's image plane
 proj_l = K1*[R, t]*points3D;
-proj_r = K2*([R, t]*points3D-[s; 0; 0]);
+proj_r = K2*[R, t]*points3D;
 
 % Normalize z row of projection to use x and y coordinates.
 proj_nl = hom2cart(proj_l')';
