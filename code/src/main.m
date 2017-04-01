@@ -11,12 +11,12 @@ pos = [0;0;0];
 Rpos = eye(3);
 
 %% Start Algorithm
-for t = 5: NumDataSet
+for t = 1: NumDataSet
     %% Implement SOFT for time instant i. Previous frame at time instant t-1
     tic;
     [R, tr] = visualSOFT(t, path1, path2, style);
     toc
-    
+
     %% Plot the odometry transformed data
     pos = pos + Rpos*tr;
     Rpos = R*Rpos;

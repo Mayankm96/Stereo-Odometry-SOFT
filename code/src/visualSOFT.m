@@ -56,18 +56,18 @@ pts2_r = detectMinEigenFeatures(I2_r,'FilterSize',5,'MinQuality',0);
 [pts1_l, pts1_r] = matchFeaturePoints(I1_l, I1_r, pts1_l, pts1_r);
 
 % compare right frame at t-1 with right frame at t
-[~, pts2_r] = matchFeaturePoints(I1_r, I2_r, pts1_r, pts2_r);
+[pts1_r, pts2_r] = matchFeaturePoints(I1_r, I2_r, pts1_r, pts2_r);
 
 % compare right frame at t with left frame at t
-[~, pts2_l] = matchFeaturePoints(I2_r, I2_l, pts2_r, pts2_l);
+[pts2_r, pts2_l] = matchFeaturePoints(I2_r, I2_l, pts2_r, pts2_l);
 
 %% Feature Selection using bucketing
 
-%figure; imshow(I2_l);
-%hold on
-%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
+figure; imshow(I2_l);
+hold on
+scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
 pts2_l = bucketFeatures(I2_l, pts2_l, bucketSize, numCorners);
-%scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
+scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
 
 %% Rotation(R) Estimation using Nister's Algorithm
 
@@ -75,7 +75,7 @@ pts2_l = bucketFeatures(I2_l, pts2_l, bucketSize, numCorners);
 % the left and right cameras
 [pts2_l, pts1_l] = matchFeaturePoints(I2_l, I1_l, pts2_l, pts1_l);
 
-%figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
+figure; showMatchedFeatures(I2_l, I1_l, pts2_l, pts1_l);
 
 % RANSAC algorithm to exclude outliers and estimate rotation matrix
 R = estimRotation(pts1_l, pts2_l, K1, K1, s, w, p);
@@ -89,10 +89,10 @@ points3D_1 = gen3dPoints(pts1_l, pts1_r, P1, P2);
 [pts2_l, pts2_r] = matchFeaturePoints(I2_l, I2_r, pts2_l, pts2_r);
 
 % Minimization of cost function to find translation
-options = optimoptions(@fminunc,'MaxFunEvals',1500);
-tr0 = [0; 0; 0];
+options = optimoptions(@lsqnonlin,'Algorithm','levenberg-marquardt','MaxFunEvals',1500);
 
-reprojError = @(tr)double(reprojectenError([tr(1); tr(2); tr(3)], R, K1, K2, points3D_1, pts2_l, pts2_r));
-tr = fminunc(reprojError, tr0, options);
+tr0 = [0; 0; 0];
+errorCostFunction = @(tr)double(reprojectenError([tr(1); tr(2); tr(3)], R, K1, K2, points3D_1, pts2_l, pts2_r));
+tr = lsqnonlin(errorCostFunction, tr0, [], [], options);
 
 end

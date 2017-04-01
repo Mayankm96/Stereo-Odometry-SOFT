@@ -9,29 +9,6 @@ function points3D = gen3dPoints(pts_l,pts_r,Pl,Pr)
 pts_l = pts_l.Location; 
 pts_r = pts_r.Location; 
 
-% initializing homogeneous world coordinates
-points3D = ones(size(pts_l,1),4); 
-
-for i = 1:size(pts_l,1)
-    pointInImage1 = pts_l(i,:);
-    pointInImage2 = pts_r(i,:);
-    
-    A = [pointInImage1(1)*Pl(3,:) - Pl(1,:);
-        pointInImage1(2)*Pl(3,:) - Pl(2,:);
-        pointInImage2(1)*Pr(3,:) - Pr(1,:);
-        pointInImage2(2)*Pr(3,:) - Pr(2,:)];
-
-    % Compute the 3-D location using the smallest singular value from the
-    % singular value decomposition of the matrix A
-    [~,~,V]=svd(A);
-
-    X = V(:,end);
-    X = X/X(end);
-
-    % Store location
-    points3D(i,:) = X';
-
-end
-points3D = points3D(:,1:3)';
+points3D = trinagulate(pts_l, pts_r, Pl', Pr');
 end
 
