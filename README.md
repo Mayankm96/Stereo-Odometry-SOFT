@@ -1,5 +1,5 @@
 This repository is an implementation of the [Stereo Odometry based on careful Feature selection
-and Tracking](ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as a part of the course project for [Probabilistic Mobile Robotics](http://home.iitk.ac.in/~gpandey/ee_698g.html).
+and Tracking](https://ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as a part of the course project for [Probabilistic Mobile Robotics](http://home.iitk.ac.in/~gpandey/ee_698g.html).
 
 # Keypoint Detection
 
