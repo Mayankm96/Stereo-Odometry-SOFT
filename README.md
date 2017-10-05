@@ -4,7 +4,7 @@ and Tracking](https://ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as
 __NOTE:__ Demo Video Run on KITTI Dataset City Sequence 01 is available [here](https://youtu.be/AxtgUxlO3FY).
 
 
-# How to use the Repository?
+# How to run the repository?
 
 __Pre-Requisites:__ Tested on PC with [MATLAB](https://in.mathworks.com/?s_tid=gn_logo) R2014a installed
 
