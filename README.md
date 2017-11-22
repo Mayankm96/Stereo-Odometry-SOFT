@@ -1,8 +1,9 @@
 This repository is an implementation of the [Stereo Odometry based on careful Feature selection
 and Tracking](https://ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as a part of the course project for [Probabilistic Mobile Robotics](http://home.iitk.ac.in/~gpandey/ee_698g.html).
 
-__NOTE:__ Demo Video Run on KITTI Dataset City Sequence 01 is available [here](https://youtu.be/AxtgUxlO3FY).
-
+__NOTE:__ 
+* Demo Video Run on KITTI Dataset City Sequence 01 is available [here](https://youtu.be/AxtgUxlO3FY).
+* The project report is available [here](docs/ee698-report.pdf).
 
 # How to run the repository?
 
