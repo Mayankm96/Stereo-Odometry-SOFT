@@ -2,8 +2,8 @@
 %%% Permits various adjustments to parameters of the Visual Odometry Algorithm
 
 %% Path to the directories containing images
-path1 = '../data/DataSet1/image_00/data/';
-path2 = '../data/DataSet1/image_01/data/';
+path1 = '../../data/DataSet1/image_00/data/';
+path2 = '../../data/DataSet1/image_01/data/';
 
 % Number of images in the dataset
 Files = dir(strcat(path1,'*.png'));

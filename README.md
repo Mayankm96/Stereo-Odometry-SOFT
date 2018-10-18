@@ -14,22 +14,22 @@ __Pre-Requisites:__ Tested on PC with [MATLAB](https://in.mathworks.com/?s_tid=g
 git clone https://github.com/Mayankm96/Stereo-Odometry-SOFT.git
 ```
 
-2. Import the dataset to the folder [`code/data`](https://github.com/Mayankm96/Stereo-Odometry-SOFT/tree/master/code/data). In case you wish to use the [KITTI](http://www.cvlibs.net/datasets/kitti/) Dataset, such as the [Residential dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php?type=residential), the following command might be useful:
+2. Import the dataset to the folder [`data`](data). In case you wish to use the [KITTI](http://www.cvlibs.net/datasets/kitti/) Dataset, such as the [Residential dataset](http://www.cvlibs.net/datasets/kitti/raw_data.php?type=residential), the following command might be useful:
 ```bash
 cd PATH/TO/Stereo-Odometry-SOFT
 ## For Reseidential Sequence: 61 (2011_09_46_drive_0061)
 # synced+rectified data
-wget -c http://kitti.is.tue.mpg.de/kitti/raw_data/2011_09_26_drive_0061/2011_09_26_drive_0061_sync.zip -P code/data
+wget -c https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_drive_0009/2011_09_26_drive_0009_sync.zip -P data
 # calib.txt
-wget -c http://kitti.is.tue.mpg.de/kitti/raw_data/2011_09_26_calib.zip -P code/data
+wget -c https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_calib.zip -P data
 ```
 __NOTE:__ The implementation here uses synced and rectified stereo images as inputs.
 
-3. Change the corresponding paramters in the configuration directory [`code/config`](https://github.com/Mayankm96/Stereo-Odometry-SOFT/tree/master/code/config)
-    * [`configFile1.m`](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/code/config/configFile1.m): Set the path to dataset folders where images are stored
-    * [`configFile2.m`](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/code/config/configFile2.m): Set the camera paramters from the calibration file downloaded
+3. Change the corresponding paramters in the configuration directory [`config`](config)
+    * [`configFile1.m`](config/configFile1.m): Set the path to dataset folders where images are stored
+    * [`configFile2.m`](config/configFile2.m): Set the camera paramters from the calibration file downloaded
 
-4. Run the script [`code/src/main.m`](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/code/src/main.m) to get a plot of the odometry estimated
+4. Run the script [`src/main.m`](src/main.m) to get a plot of the odometry estimated
 
 
 # Proposed Implementation of the Algorithm
@@ -51,7 +51,7 @@ This part of the algorithm is concerned with finding out the features for the eg
 This process can be broken down into following steps:
 
 1. Extraction of corner- like features in the pair of images at instant t: Blob and corner masks used over the input image
-![Blob and Corner Mask](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/images/detector-masks.PNG)
+![Blob and Corner Mask](images/detector-masks.PNG)
 
 2. [Non- maximum and non-minimum suppression](https://pdfs.semanticscholar.org/52ca/4ed04d1d9dba3e6ae30717898276735e0b79.pdf) used on the filtered images, producing in feature candidates in either of the following classes: blob max, blob min, corner max, and corner min
 
@@ -63,7 +63,7 @@ This process can be broken down into following steps:
 
 In this we carefully select only the strongest features in the image by means of bucketing. Each bucket is a 50 pixels x 50 pixels part of the image. Bucketing helps in maintaing a uniform distribution of feature points across the image.
 
-![Feature Selection by Bucketing](https://github.com/Mayankm96/Stereo-Odometry-SOFT/blob/master/images/feature-selection.png)
+![Feature Selection by Bucketing](images/feature-selection.png)
 
 In above image, the crosses are all the features detected using minimum eigenvalue algorithm in our image. The red and green ones are the features that were selected after circular matching, and finally, the green ones are the features that have been selected through bucketing.
 
