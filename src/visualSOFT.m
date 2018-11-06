@@ -89,6 +89,7 @@ R = estimRotation(pts1_l, pts2_l, K1, K1, s, w, p);
 
 % 3D Point Cloud generation at time t-1 using Triangulation
 [pts1_l, pts1_r] = matchFeaturePoints(I1_l, I1_r, pts1_l, pts1_r);
+[pts2_l, pts2_r] = matchFeaturePoints(I2_l, I2_r, pts2_l, pts2_r);  % ADDED FOR SIZE ACCORDANCE
 points3D_1 = gen3dPoints(pts1_l, pts1_r, P1, P2);
 
 % Minimization of cost function to find translation
