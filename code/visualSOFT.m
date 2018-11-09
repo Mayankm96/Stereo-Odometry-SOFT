@@ -1,17 +1,22 @@
-function [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r)
+function [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r, P1, P2)
 % Given the timestep t , Stereo Odometry based on careful Feature selection
 % and Tracking is implemented to estimate the rotation and translation between
 % the frames at t-1 and t
 %   t: frame instant for which computation is being performed
 %   I1_l, I1_r: stereo pair of left and right images for time t-1
 %   I2_l, I2_r: stereo pair of left and right images for time t
+%   P1(3, 4): projection matrix of camera 1 (left)
+%   P2(3, 4): rojection matrix of camera 2 (right)
 
 addpath(genpath('functions'));
 addpath('config');
 
 %% Execute the configuration file to read parameters for SOFT Algorithm
-configFile1;
 configFile2;
+
+%% Intrinsic camera matrices for rectified images
+K1 = P1(1:3, 1:3);
+K2 = P2(1:3, 1:3);
 
 %% Feature Tracking at time instant t
 % In our implementation we have used the  Kanade-Lucas-Tomasi (KLT) algorithm

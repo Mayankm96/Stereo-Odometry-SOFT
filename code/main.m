@@ -25,15 +25,15 @@ Rpos = eye(3);
 for t = 2 : num_of_images
     %% Read Images
     % for time instant t
-    I1_l = imread([img_files1(t).folder, '/', img_files1(t -1).name]);
-    I1_r = imread([img_files2(t).folder, '/', img_files2(t -1).name]);
+    I1_l = imread([img_files1(t).folder, '/', img_files1(t - 1).name]);
+    I1_r = imread([img_files2(t).folder, '/', img_files2(t - 1).name]);
     % for time instant t + 1
     I2_l = imread([img_files1(t+1).folder, '/', img_files1(t).name]);
     I2_r = imread([img_files2(t+1).folder, '/', img_files2(t).name]);
 
     %% Implement SOFT for time instant t+1
     tic;
-    [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r);
+    [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r, P1, P2);
     toc
 
     %% Estimated pose relative to global frame at t = 0

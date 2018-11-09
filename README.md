@@ -31,11 +31,11 @@ wget -c https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_cali
 ```
 __NOTE:__ The implementation here uses synced and rectified stereo images as inputs.
 
-3. Change the corresponding paramters in the configuration directory [`config`](config)
-    * [`configFile1.m`](config/configFile1.m): Set the path to dataset folders as well as the camera paramters
-    * [`configFile2.m`](config/configFile2.m): Set the paramters for visual odometry
+3. Change the corresponding paramters in the configuration directory [`config`](code/config)
+    * [`configFile1.m`](code/config/configFile1.m): Set the path to dataset folders as well as the camera paramters
+    * [`configFile2.m`](code/config/configFile2.m): Set the paramters for visual odometry
 
-4. Run the script [`main.m`](main.m) to get a plot of the odometry estimated
+4. Run the script [`main.m`](code/main.m) to get a plot of the odometry estimated
 
 
 # Proposed Implementation of the Algorithm
