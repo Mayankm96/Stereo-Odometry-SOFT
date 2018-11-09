@@ -1,5 +1,4 @@
 ## UPDATE [November 9, 2018]:
- * There are several bugs in this program which are causing errors while running in recent MATLAB versions.
  * Currently repository undergoing changes to implement [SOFT2](http://www.cvlibs.net/datasets/kitti/eval_odometry_detail.php?&result=51b6194016dda8ee70002998478a7afe870c4fde).
 
 ---

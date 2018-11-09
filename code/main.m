@@ -9,7 +9,10 @@ configFile1;
 %% Read ground truth file if flag is true
 if show_gt_flag
   ground_truth = load(gt_file);
-  ground_truth = ground_truth(:, [end-8 end]);
+  xmax = max(ground_truth(:, end - 8));
+  xmin = min(ground_truth(:, end - 8));
+  zmax = max(ground_truth(:, end));
+  zmin = min(ground_truth(:, end));
 end
 
 %% Read directories containing images
@@ -22,6 +25,7 @@ pos = [0;0;0];
 Rpos = eye(3);
 
 %% Start Algorithm
+profile ON
 for t = 2 : num_of_images
     %% Read Images
     % for time instant t
@@ -37,22 +41,26 @@ for t = 2 : num_of_images
     toc
 
     %% Estimated pose relative to global frame at t = 0
-    pos = pos + Rpos * tr;
+    pos = pos + Rpos * tr';
     Rpos = R * Rpos;
 
     %% Plot the odometry transformed data
     subplot(2, 2 , [2 4]);
-    scatter(pos(1), pos(3), 'b', 'filled');
+    scatter( - pos(1), pos(3), 'b', 'filled');
     hold on;
     title(sprintf('Odometry plot at frame %d', t))
     xlabel('x-axis (in meters)');
     ylabel('z-axis (in meters)');
     %% Read ground truth pose if flag is true
     if show_gt_flag
-      pos_gt = ground_truth(t, :);
-      scatter(pos_gt(1), pos_gt(2), 'r', 'filled');
+      axis([xmin xmax zmin zmax])
+      T = reshape(ground_truth(t, :), 4, 3)';
+      pos_gt = T(:, 4);
+      scatter(pos_gt(1), pos_gt(3), 'r', 'filled');
       legend('Estimated Pose', 'Ground Truth Pose')
     end
     %% Pause to visualize the plot
     pause(0.0001);
 end
+profile VIEWER 
+

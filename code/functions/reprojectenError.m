@@ -11,7 +11,7 @@ function error = reprojectenError(t, R, K1, K2, points3D, pts_l, pts_r)
 points3D_l = [points3D; ones(1,length(points3D(1,:)))];
 
 % Transformation from left camera to right camera
-s =  [-5.370000e-01; 4.822061e-03; -1.252488e-02];
+s =  [-3.875744e+02; 0; 0];
 T= [eye(3), s; [0, 0, 0, 1]];
 points3D_r = T*points3D_l;
 
