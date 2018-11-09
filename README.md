@@ -1,7 +1,13 @@
+## UPDATE [November 9, 2018]:
+ * There are several bugs in this program which are causing errors while running in recent MATLAB versions.
+ * Currently repository undergoing changes to implement [SOFT2](http://www.cvlibs.net/datasets/kitti/eval_odometry_detail.php?&result=51b6194016dda8ee70002998478a7afe870c4fde).
+
+---
+
 This repository is an implementation of the [Stereo Odometry based on careful Feature selection
 and Tracking](https://ieeexplore.ieee.org/iel7/7320493/7324045/07324219.pdf), as a part of the course project for [Probabilistic Mobile Robotics](http://home.iitk.ac.in/~gpandey/ee_698g.html).
 
-__NOTE:__ 
+__NOTE:__
 * Demo Video Run on KITTI Dataset City Sequence 01 is available [here](https://youtu.be/AxtgUxlO3FY).
 * The project report is available [here](docs/ee698-report.pdf).
 
@@ -26,10 +32,10 @@ wget -c https://s3.eu-central-1.amazonaws.com/avg-kitti/raw_data/2011_09_26_cali
 __NOTE:__ The implementation here uses synced and rectified stereo images as inputs.
 
 3. Change the corresponding paramters in the configuration directory [`config`](config)
-    * [`configFile1.m`](config/configFile1.m): Set the path to dataset folders where images are stored
-    * [`configFile2.m`](config/configFile2.m): Set the camera paramters from the calibration file downloaded
+    * [`configFile1.m`](config/configFile1.m): Set the path to dataset folders as well as the camera paramters
+    * [`configFile2.m`](config/configFile2.m): Set the paramters for visual odometry
 
-4. Run the script [`src/main.m`](src/main.m) to get a plot of the odometry estimated
+4. Run the script [`main.m`](main.m) to get a plot of the odometry estimated
 
 
 # Proposed Implementation of the Algorithm
