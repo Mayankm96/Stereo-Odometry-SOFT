@@ -31,6 +31,10 @@ num = 0;
 % for both filtered images (blobs and corners)
 for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
     for j = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
+        % loop variables
+        f1min_i = i; f1min_j = j; f1max_i = i; f1max_j = j;
+        f2min_i = i; f2min_j = j; f2max_i = i; f2max_j = j;
+        
         % get intensity values
         f1min_val = I_f1(i, j);
         f1max_val = f1min_val;
