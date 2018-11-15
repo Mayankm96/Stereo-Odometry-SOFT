@@ -1,18 +1,19 @@
-function [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r, P1, P2)
-% Given the timestep t , Stereo Odometry based on careful Feature selection
+function [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r, P1, P2, vo_params)
+% VISUALSOFT Given the timestep t , Stereo Odometry based on careful Feature selection
 % and Tracking is implemented to estimate the rotation and translation between
 % the frames at t-1 and t
-%   t: frame instant for which computation is being performed
-%   I1_l, I1_r: stereo pair of left and right images for time t-1
-%   I2_l, I2_r: stereo pair of left and right images for time t
-%   P1(3, 4): projection matrix of camera 1 (left)
-%   P2(3, 4): rojection matrix of camera 2 (right)
-
-addpath(genpath('functions'));
-addpath('config');
-
-%% Execute the configuration file to read parameters for SOFT Algorithm
-configFile2;
+%
+% INPUT:
+%   - t: frame instant for which computation is being performed
+%   - I1_l, I1_r: stereo pair of left and right images for time t-1
+%   - I2_l, I2_r: stereo pair of left and right images for time t
+%   - P1(3, 4): projection matrix of camera 1 (left)
+%   - P2(3, 4): rojection matrix of camera 2 (right)
+%   - vo_params: structure containing parameters for the algorithm
+%
+% OUTPUT:
+%   - R(3, 3): Rotation estimate between time t-1 and t
+%   - R(3, 3): Translation estimate between time t-1 and t
 
 %% Intrinsic camera matrices for rectified images
 K1 = P1(1:3, 1:3);
@@ -54,7 +55,7 @@ imshow(I2_l);
 title(sprintf('Feature selection using bucketing at frame %d', t))
 hold on
 scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+r');
-pts2_l = bucketFeatures(I2_l, pts2_l, bucketSize, numCorners);
+pts2_l = bucketFeatures(I2_l, pts2_l, vo_params.bucketing.bucket_width, vo_params.bucketing.max_features);
 scatter(pts2_l.Location(:,1),pts2_l.Location(:,2),'+g');
 
 %% Feature Matching to get corresponding points at time instant t and t-1 in
