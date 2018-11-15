@@ -11,8 +11,7 @@ function out = blob5x5(img)
 %   - img(image): Given input image
 %
 % OUTPUT:
-%   - I_dx: gradient of image along x-axis
-%   - I_dy: gradient of image along y-axis
+%   - out: convolved output image 
 
 blob_filter = [-1 -1 -1 -1 -1; ...
                -1  1  1  1 -1; ...

@@ -33,7 +33,7 @@ vo_params.matcher.match_radius = 200;             % matching radius (du/dv in pi
 vo_params.matcher.match_disp_tolerance = 2;       % dv tolerance for stereo matches (in pixels)
 vo_params.matcher.outlier_disp_tolerance = 5;     % outlier removal: disparity tolerance (in pixels)
 vo_params.matcher.outlier_flow_tolerance = 5;     % outlier removal: flow tolerance (in pixels)
-vo_params.matcher.multi_stage = 1;                % 0=disabled,1=multistage matching (denser and faster)
+vo_params.matcher.multi_stage = 0;                % 0=disabled,1=multistage matching (denser and faster)
 vo_params.matcher.refinement = 1;                 % refinement (0=none,1=pixel,2=subpixel)
         
 %% Paramters for Feature Selection using bucketing
