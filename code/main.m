@@ -31,8 +31,7 @@ Rpos = eye(3);
 %% Start Algorithm
 start = 0;
 for t = 1 : num_of_images
-    %% Read Images
-    % for time instant t
+    %% Read images for time instant t
     I2_l = imread([img_files1(t+1).folder, '/', img_files1(t).name]);
     I2_r = imread([img_files2(t+1).folder, '/', img_files2(t).name]);
     % resize image to make algorithm faster
@@ -46,9 +45,13 @@ for t = 1 : num_of_images
         start = 1;
         continue;
     end
-
-    %% Implement SOFT for time instant t+1
+    
+    %% Read image for time instant t-1 
+    % used for visualization of flow only
     I1_l = imread([img_files1(t+1).folder, '/', img_files1(t-1).name]);
+    I1_l = imresize(I1_l,  vo_params.feature.rescale_factor);
+    
+    %% Implement SOFT for time instant t+1
     tic;
     [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I2_r, P1, P2, vo_params, vo_previous);
     toc

@@ -1,4 +1,4 @@
-function showStereoMatches(I2_l, I2_r, matches, style, lineWidth, ptWidth)
+function showStereoMatches(I2_l, I2_r, matches, style, lineWidth,  ptSyle, ptWidth)
 %SHOWSTEREOMATCHES Plot matches detected in two images using MATLAB
 %
 % INPUT: 
@@ -7,6 +7,7 @@ function showStereoMatches(I2_l, I2_r, matches, style, lineWidth, ptWidth)
 %   - matches(1, N): array of structure conatining keypoints 
 %   - style: defines color and type of plotted line
 %   - lineWidth: defines thickness of plotted line
+%   - ptSyle: defines type of points; eg: 'o'
 %   - ptWidth: defines thickness of plotted points
 
 % false color
@@ -32,10 +33,9 @@ for match = matches
     y_from(num) = match.pt2_r(2);
     y_to(num)   = match.pt2_l(2);
 end
-% plot end points
-scatter(y_from, x_from, '+r', 'Linewidth', ptWidth);
-scatter(y_to, x_to, '+g', 'Linewidth', ptWidth);
 % plot line
 plot([y_from; y_to], [x_from; x_to], style, 'Linewidth', lineWidth);
-
+% plot end points
+scatter(y_from, x_from, ptSyle, 'r', 'Linewidth', ptWidth);
+scatter(y_to, x_to, ptSyle, 'g', 'Linewidth', ptWidth);
 end

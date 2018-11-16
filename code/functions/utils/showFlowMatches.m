@@ -1,12 +1,13 @@
-function showFlowMatches(I1_l, I2_l, matches, style, lineWidth, ptWidth)
+function showFlowMatches(I1_l, I2_l, matches, lineStyle, lineWidth, ptSyle, ptWidth)
 %SHOWFLOWMATCHES Plot matches detected in between two consecutive time instants
 %
 % INPUT:
 %   - I2_l: left image at time t
 %   - I2_r: right image at time t
 %   - matches(1, N): array of structure conatining keypoints
-%   - style: defines color and type of plotted line
+%   - lineStyle: defines color and type of plotted line
 %   - lineWidth: defines thickness of plotted line
+%   - ptSyle: defines type of points; eg: 'o'
 %   - ptWidth: defines thickness of plotted points
 
 % false color
@@ -32,10 +33,10 @@ for match = matches
     y_from(num) = match.pt1_l(2);
     y_to(num)   = match.pt2_l(2);
 end
-% plot end points
-scatter(y_from, x_from, '+r', 'Linewidth', ptWidth);
-scatter(y_to, x_to, '+g', 'Linewidth', ptWidth);
 % plot line
-plot([y_from; y_to], [x_from; x_to], style, 'Linewidth', lineWidth);
+plot([y_from; y_to], [x_from; x_to], lineStyle, 'Linewidth', lineWidth);
+% plot end points
+scatter(y_from, x_from, ptSyle,'r', 'Linewidth', ptWidth);
+scatter(y_to, x_to, ptSyle, 'g', 'Linewidth', ptWidth);
 
 end
