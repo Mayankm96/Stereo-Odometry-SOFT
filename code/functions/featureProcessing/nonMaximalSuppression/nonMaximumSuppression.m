@@ -96,7 +96,7 @@ for i = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
         failed_f1max = checkMaximumValidity(I_f1, f1max_val, f1max_i, f1max_j, nms_n, margin);
 
         if not(failed_f1max)
-            if (f1max_val <= nms_tau)
+            if (f1max_val >= nms_tau)
                 num = num + 1;
                 keypoints(num).location = [f1max_i, f1max_j];
                 keypoints(num).value = f1max_val;
@@ -120,7 +120,7 @@ for i = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
         failed_f2max = checkMaximumValidity(I_f2, f2max_val, f2max_i, f2max_j, nms_n, margin);
         
         if not(failed_f2max)
-            if (f2max_val <= nms_tau)
+            if (f2max_val >= nms_tau)
                 num = num + 1;
                 keypoints(num).location = [f2max_i, f2max_j];
                 keypoints(num).value = f2max_val;
@@ -131,4 +131,3 @@ for i = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
 end
 
 end
-
