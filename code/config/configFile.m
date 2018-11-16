@@ -24,16 +24,16 @@ cam_params.cy = 1.728540e+02;                     % principal point (v-coordinat
 cam_params.base = 3.875744e+02;                   % baseline in meters (absolute value)
 
 %% Parameters for Feature Extraction
-vo_params.feature.nms_n = 3;                      % non-max-suppression: min. distance between maxima (in pixels)
+vo_params.feature.nms_n = 5;                      % non-max-suppression: min. distance between maxima (in pixels)
 vo_params.feature.nms_tau = 50;                   % non-max-suppression: interest point peakiness threshold
 
 %% Parameters for Feature Matching
 vo_params.matcher.match_binsize = 50;             % matching bin width/height (affects efficiency only)
 vo_params.matcher.match_radius = 200;             % matching radius (du/dv in pixels)
 vo_params.matcher.match_disp_tolerance = 2;       % dv tolerance for stereo matches (in pixels)
+vo_params.matcher.match_uniqueness = 0.9;         % ratio between best and second best match
 vo_params.matcher.outlier_disp_tolerance = 5;     % outlier removal: disparity tolerance (in pixels)
 vo_params.matcher.outlier_flow_tolerance = 5;     % outlier removal: flow tolerance (in pixels)
-vo_params.matcher.multi_stage = 1;                % 0=disabled,1=multistage matching (denser and faster)
 vo_params.matcher.refinement = 1;                 % refinement (0=none,1=pixel,2=subpixel)
         
 %% Paramters for Feature Selection using bucketing

@@ -1,38 +1,27 @@
-function [maxima1, maxima2] = computeFeatures(I, nms_n, nms_tau, multi_stage)
+function keypts_with_descriptors = computeFeatures(I, feature_params)
 %COMPUTEFEATURES Compute sparse set of features from image
 % 
 % Input:
 %   - I(image): input grayscale image 
-%   - nms_n: non-max neighborhood
-%   - nms_tau: non-max threshold
-%   - multi_stage: flag to enable sparse or/and dense feature extraction
+%   - feature_params: structure containing the following:
+%       - nms_n: non-max neighborhood
+%       - nms_tau: non-max threshold
 %
 % Output: 
-%   - maxima1(N1, 1): Sparse maxima features with properties 
-%                           [location(u, v), value, class, descriptor (128 bits)]
-%   - maxima2(N2, 1): Dense maxima features with properties 
-%                           [location(u, v), value, class, descriptor (128 bits)]
+%   - keypts_with_descriptors(1, N): Extracted features keypoints with properties 
+%                   [location(x, y), value, class, descriptor (128 bits)]
+
+% feature processing parameters
+nms_n = feature_params.nms_n;
+nms_tau = feature_params.nms_tau;
 
 % apply filters
 [I_dx, I_dy] = sobel5x5(I);
 I_f1 = blob5x5(I);
 I_f2 = checkerboard5x5(I);
 
-% extract sparse maxima (1st pass) via non-maximum suppression
-nms_n_sparse = nms_n * 3;
-if (nms_n_sparse > 10)
-  nms_n_sparse = max(nms_n, 10);
-end
-maxima1 = nonMaximumSuppression(I_f1, I_f2, nms_n_sparse, nms_tau);
-descriptors = computeDescriptors(I_dx, I_dy, maxima1);
-maxima1.descriptors = descriptors;
-
-% extract dense maxima (2nd pass) via non-maximum suppression
-maxima2 = [];
-if multi_stage
-    maxima2 = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau);
-    descriptors = computeDescriptors(I_dx, I_dy, maxima2);
-    maxima2.descriptors = descriptors;
-end
+% extract keypoints via non-maximum suppression
+keypts = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau);
+keypts_with_descriptors = computeDescriptors(I_dx, I_dy, keypts);
 
 end

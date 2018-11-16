@@ -1,4 +1,4 @@
-function keypoints = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
+function [keypoints, num] = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
 %NONMAXIMUMSUPPRESION Extracting corner and blob feature points 
 % Non-maximum- and non-minimum-suppression are employed over the
 % filtered images, resulting in feature candidates which belong
@@ -15,8 +15,9 @@ function keypoints = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
 %   - nms_tau: interest point peakiness threshold
 %
 % OUTPUT:
-%   - keypoints(N): keypoints detected. 
+%   - keypoints(1, N): keypoints detected. 
 %                   Each keypoints has: (location(x, y), value, class)
+%   - num: Number of keypoints detected
 
 % leaving margin for safety 
 margin = 9;
@@ -26,6 +27,9 @@ margin = 9;
 
 % number of feature points
 num = 0;
+
+% create a structure to store keypoints
+keypoints = struct('location', {}, 'value', {}, 'class', {});
 
 % extracting features through non-maximum and non-minimum suppresions
 % for both filtered images (blobs and corners)
@@ -82,9 +86,9 @@ for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
         if not(failed_f1min)
             if (f1min_val <= - nms_tau)
                 num = num + 1;
-                keypoints.location(num, :) = [f1min_i, f1min_j];
-                keypoints.value(num) = f1min_val;
-                keypoints.class(num) = 0;
+                keypoints(num).location = [f1min_i, f1min_j];
+                keypoints(num).value = f1min_val;
+                keypoints(num).class = 1;
             end
         end
         
@@ -94,9 +98,9 @@ for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
         if not(failed_f1max)
             if (f1max_val <= nms_tau)
                 num = num + 1;
-                keypoints.location(num, :) = [f1max_i, f1max_j];
-                keypoints.value(num) = f1max_val;
-                keypoints.class(num) = 1;
+                keypoints(num).location = [f1max_i, f1max_j];
+                keypoints(num).value = f1max_val;
+                keypoints(num).class = 2;
             end
         end
         
@@ -106,9 +110,9 @@ for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
         if not(failed_f2min)
             if (f2min_val <= - nms_tau)
                 num = num + 1;
-                keypoints.location(num, :) = [f2min_i, f2min_j];
-                keypoints.value(num) = f2min_val;
-                keypoints.class(num) = 2;
+                keypoints(num).location = [f2min_i, f2min_j];
+                keypoints(num).value = f2min_val;
+                keypoints(num).class = 3;
             end
         end
         
@@ -118,13 +122,13 @@ for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
         if not(failed_f2max)
             if (f2max_val <= nms_tau)
                 num = num + 1;
-                keypoints.location(num, :) = [f2max_i, f2max_j];
-                keypoints.value(num) = f2max_val;
-                keypoints.class(num) = 3;
+                keypoints(num).location = [f2max_i, f2max_j];
+                keypoints(num).value = f2max_val;
+                keypoints(num).class = 4;
             end
         end
     end
 end
 
-% total number of keypoints
-keypoints.count = num;
+end
+
