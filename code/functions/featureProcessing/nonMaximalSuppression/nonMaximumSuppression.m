@@ -23,7 +23,7 @@ function [keypoints, num] = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
 margin = 9;
 
 % size of image
-[width, height] = size(I_f1);
+[height, width] = size(I_f1);
 
 % number of feature points
 num = 0;
@@ -33,8 +33,8 @@ keypoints = struct('location', {}, 'value', {}, 'class', {});
 
 % extracting features through non-maximum and non-minimum suppresions
 % for both filtered images (blobs and corners)
-for i = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
-    for j = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
+for i = (nms_n + margin):(nms_n + 1):(height - nms_n - margin)
+    for j = (nms_n + margin):(nms_n + 1):(width - nms_n - margin)
         % loop variables
         f1min_i = i; f1min_j = j; f1max_i = i; f1max_j = j;
         f2min_i = i; f2min_j = j; f2max_i = i; f2max_j = j;

@@ -24,6 +24,7 @@ cam_params.cy = 1.728540e+02;                     % principal point (v-coordinat
 cam_params.base = 3.875744e+02;                   % baseline in meters (absolute value)
 
 %% Parameters for Feature Extraction
+vo_params.feature.rescale_factor = 1.0;           % rescaling factor of the original image for speed
 vo_params.feature.nms_n = 5;                      % non-max-suppression: min. distance between maxima (in pixels)
 vo_params.feature.nms_tau = 50;                   % non-max-suppression: interest point peakiness threshold
 

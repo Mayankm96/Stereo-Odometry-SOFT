@@ -18,10 +18,10 @@ num_of_images = length(img_files1);
 %% Read ground truth file if flag is true
 if data_params.show_gt_flag
   ground_truth = load(data_params.gt_file);
-  xmax = max(ground_truth(:, end - 8));
-  xmin = min(ground_truth(:, end - 8));
-  zmax = max(ground_truth(:, end));
-  zmin = min(ground_truth(:, end));
+  gt_x_max = max(ground_truth(:, end - 8));
+  gt_x_min = min(ground_truth(:, end - 8));
+  gt_z_max = max(ground_truth(:, end));
+  gt_z_min = min(ground_truth(:, end));
 end
 
 %% Initialize variables for odometry
@@ -29,18 +29,28 @@ pos = [0;0;0];
 Rpos = eye(3);
 
 %% Start Algorithm
-for t = 2 : num_of_images
+start = 0;
+for t = 1 : num_of_images
     %% Read Images
-    % for time instant t-1
-    I1_l = imread([img_files1(t).folder, '/', img_files1(t - 1).name]);
-    I1_r = imread([img_files2(t).folder, '/', img_files2(t - 1).name]);
     % for time instant t
     I2_l = imread([img_files1(t+1).folder, '/', img_files1(t).name]);
     I2_r = imread([img_files2(t+1).folder, '/', img_files2(t).name]);
+    % resize image to make algorithm faster
+    I2_l = imresize(I2_l,  vo_params.feature.rescale_factor);
+    I2_r = imresize(I2_r,  vo_params.feature.rescale_factor);
+
+    %% Bootstraping for initialization
+    if (start == 0)
+        vo_previous.pts1_l = computeFeatures(I2_l, vo_params.feature);
+        vo_previous.pts1_r = computeFeatures(I2_r, vo_params.feature);
+        start = 1;
+        continue;
+    end
 
     %% Implement SOFT for time instant t+1
+    I1_l = imread([img_files1(t+1).folder, '/', img_files1(t-1).name]);
     tic;
-    [R, tr] = visualSOFT(t, I1_l , I1_r, I2_l, I2_r, P1, P2, vo_params);
+    [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I2_r, P1, P2, vo_params, vo_previous);
     toc
 
     %% Estimated pose relative to global frame at t = 0
@@ -56,7 +66,7 @@ for t = 2 : num_of_images
     ylabel('z-axis (in meters)');
     %% Read ground truth pose if flag is true
     if data_params.show_gt_flag
-      axis([xmin xmax zmin zmax])
+      axis([gt_x_min gt_x_max gt_z_min gt_z_max])
       T = reshape(ground_truth(t, :), 4, 3)';
       pos_gt = T(:, 4);
       scatter(pos_gt(1), pos_gt(3), 'r', 'filled');

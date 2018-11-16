@@ -20,11 +20,6 @@ function [min_ind, validity] = findMatch(keypt1, keypts2, bin_pos2, x_bin_num, y
 %   - min_ind: index of the keypoint matched in Image 2
 %   - validity: boolean flag for successful match or not
 
-% initialize variables
-min_cost_1 = 10000000;
-min_cost_2 = 10000000;
-min_ind = 0;
-
 % matching parameters
 match_binsize = match_params.match_binsize;
 match_radius = match_params.match_radius;
@@ -44,7 +39,7 @@ y_min = y1 - match_radius;
 y_max = y1 + match_radius;
 
 % if stereo search, constrain to 1d since inputs are rectified
-if not(flow) 
+if not(flow)
     y_min = y1 - match_disp_tolerance;
     y_max = y1 + match_disp_tolerance;
 end
@@ -55,40 +50,47 @@ x_bin_max = min( max( floor(x_max/match_binsize), 0), x_bin_num - 1) + 1;
 y_bin_min = min( max( floor(y_min/match_binsize), 0), y_bin_num - 1) + 1;
 y_bin_max = min( max( floor(y_max/match_binsize), 0), y_bin_num - 1) + 1;
 
-% for all bins of interest do
- for x_bin = x_bin_min:x_bin_max
-     for y_bin = y_bin_min:y_bin_max
-         % consider keypoints in image 2 present in the associated bin
-         for in2 = bin_pos2{x_bin, y_bin, c}
-             % extract coordinates
-             x2 = keypts2(in2).location(1);
-             y2 = keypts2(in2).location(2);
-             % check for validity of candidate to be within matching radius 
-             if (x2 >= x_min && x2 <= x_max && y2 >= y_min && y2 <= y_max)
-                 descr2 = keypts2(in2).descriptor;
-                 % compute SAD score
-                 dists = pdist2(double(descr1'), double(descr2'), 'cityblock');
-                 cost = sum(dists);
-                 % candidate keypoint in image 2 is the one correspodning
-                 % to the least SAD score
-                 if (cost < min_cost_1)
-                    min_ind  = in2;
-                    min_cost_1 = cost;
-                 else 
-                     if (cost < min_cost_2)
-                         min_cost_2 = cost;
-                     end
-                 end
-             end
-         end
-     end
- end
- 
- % check uniqueness criterion
- if ( min_cost_1 <= match_uniqueness * min_cost_2)
-     validity = true;
- else
-     validity = false;
- end
-         
+% consider keypoints in image 2 present in the bins of interest
+in2 = horzcat(bin_pos2{x_bin_min:x_bin_max, y_bin_min:y_bin_max, c});
+
+% if no valid indices => match does not exist
+if (isempty(in2))
+    min_ind = -1;
+    validity = false;
+    return;
+end
+
+% check if candidate are within matching radius
+location2_all = vertcat(keypts2(in2).location)';
+valid_in2_indices = find(location2_all(1, :) >= x_min & location2_all(1, :) <= x_max & ...
+                 location2_all(2, :) >= y_min & location2_all(2, :) <= y_max);
+
+% if no valid indices => match does not exist
+if (isempty(valid_in2_indices))
+    min_ind = -1;
+    validity = false;
+    return;
+end
+
+% extract descriptors
+valid_in2 = in2(valid_in2_indices);
+descr2_all = horzcat(keypts2(valid_in2).descriptor);
+
+% compute SAD score between input keypoint in image 1 and all valid
+% keypoints in image 2
+dists = pdist2(double(descr1'), double(descr2_all'), 'cityblock');
+
+% find keypoint in image2 associated with minimum cost
+[min_cost_1, index] = min(dists);
+min_ind = valid_in2(index);
+                         
+% check uniqueness criterion by comparing least cost to second least cost
+min_cost_2 = min( setdiff( dists, min_cost_1));
+if ( min_cost_1 <= match_uniqueness * min_cost_2)
+    validity = true;
+else
+    min_ind = -1;
+    validity = false;
+end
+
 end
