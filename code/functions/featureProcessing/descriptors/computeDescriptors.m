@@ -22,14 +22,13 @@ function keypts_out = computeDescriptors(I_dx, I_dy, keypts_in)
 %       0  0  0  0  0  0  0  0  0  0  0
 %       1  0  0  0  0  0  0  0  0  0  1
 %       0  0  0  0  0  0  0  0  0  0  0
-%       0  1  0  1  0  1  0  1  0  1  0
-%       0  0  0  0  0  0  0  0  0  0  0
-%       0  1  0  1  0  1  0  1  0  1  0
+%       0  0  1  0  1  0  1  0  1  0  0
+%       0  0  0  0  0  X  0  0  0  0  0
+%       0  0  1  0  1  0  1  0  1  0  0
 %       0  0  0  0  0  0  0  0  0  0  0
 %       1  0  0  0  0  0  0  0  0  0  1
 %       0  0  0  0  0  0  0  0  0  0  0
 %       0  0  0  0  1  0  1  0  0  0  0
-%       0  0  0  0  0  0  0  0  0  0  0
 descriptor_mask = zeros(11, 11, 'logical');
 descriptor_mask(1, 5)   = 1;
 descriptor_mask(1, 7)   = 1;
