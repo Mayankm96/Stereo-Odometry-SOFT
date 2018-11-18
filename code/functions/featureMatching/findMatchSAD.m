@@ -1,6 +1,6 @@
-function [min_ind, validity] = findMatch(keypt1, keypts2, bin_pos2, x_bin_num, y_bin_num, ...
+function [min_ind, validity] = findMatchsAD(keypt1, keypts2, bin_pos2, x_bin_num, y_bin_num, ...
                              match_params, flow)
-%FINDMATCH Given a keypoint in image 1, we use sparse SAD to find a matching
+%FINDMATCHSAD Given a keypoint in image 1, use sparse SAD to find a matching
 % feature in image 2 within a (M × M) search window
 %
 % INPUT:

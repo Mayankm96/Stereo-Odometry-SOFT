@@ -1,4 +1,5 @@
-function matches = performCircularMatching(pts1_l, pts2_l, pts1_r, pts2_r, dims, match_params)
+function matches = performCircularMatching(pts1_l, pts2_l, pts1_r, pts2_r, ...
+                                           dims, match_params)
 %%performCircularMatching Given feature points in a pair of stereo images at
 % time instants t-1 and t, perform circular matching using SAD algorithm
 %
@@ -12,7 +13,6 @@ function matches = performCircularMatching(pts1_l, pts2_l, pts1_r, pts2_r, dims,
 %       - match_binsize: matching bin width/height (for computation efficiency)
 %       - match_radius: matching radius (dx/dy in pixels)
 %       - match_disp_tolerance: dv tolerance for stereo matches (in pixels)
-%       - match_uniqueness: ratio between best and second best match
 %
 % OUTPUT:
 %   - matches: array of structure of matched points across four images
@@ -49,25 +49,25 @@ pts1_l_copy = pts1_l;
 parfor i1_l = 1 : size(pts1_l, 2)
     % match in circle
     % a) left frame at t-1 with right frame at t-1
-    [i1_r, validity] = findMatch(pts1_l(i1_l), pts1_r, bin_pos1_r, x_bin_num, y_bin_num, match_params, 0);
+    [i1_r, validity] = findMatchSAD(pts1_l(i1_l), pts1_r, bin_pos1_r, x_bin_num, y_bin_num, match_params, 0);
     if not(validity)
         continue;
     end
 
     % b) right frame at t-1 with right frame at t
-    [i2_r, validity] = findMatch(pts1_r(i1_r), pts2_r, bin_pos2_r, x_bin_num, y_bin_num, match_params, 1);
+    [i2_r, validity] = findMatchSAD(pts1_r(i1_r), pts2_r, bin_pos2_r, x_bin_num, y_bin_num, match_params, 1);
     if not(validity)
         continue;
     end
 
     % c) right frame at t with left frame at t
-   [i2_l, validity] = findMatch(pts2_r(i2_r), pts2_l, bin_pos2_l, x_bin_num, y_bin_num, match_params, 0);
+   [i2_l, validity] = findMatchSAD(pts2_r(i2_r), pts2_l, bin_pos2_l, x_bin_num, y_bin_num, match_params, 0);
     if not(validity)
         continue;
     end
 
     % d) left frame at t with left frame at t-1
-    [i1_l2, validity] = findMatch(pts2_l(i2_l), pts1_l_copy, bin_pos1_l, x_bin_num, y_bin_num, match_params, 1);
+    [i1_l2, validity] = findMatchSAD(pts2_l(i2_l), pts1_l_copy, bin_pos1_l, x_bin_num, y_bin_num, match_params, 1);
     if not(validity)
         continue;
     end
@@ -80,11 +80,11 @@ parfor i1_l = 1 : size(pts1_l, 2)
         m_pt2_l =  pts2_l(i2_l).location;
         m_pt1_r =  pts1_r(i1_r).location;
         m_pt2_r =  pts2_r(i2_r).location;
-        
+
         % calculate disparity
         disp1 = m_pt1_l(2) - m_pt1_r(2);
         disp2 = m_pt2_l(2) - m_pt2_r(2);
-      
+
         % if disparities are positive
         if (disp1 >= 0 && disp2 >= 0)
             % add match

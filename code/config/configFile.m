@@ -31,15 +31,14 @@ cam_params.base = 3.875744e+02;                   % baseline in meters (absolute
 vo_params.feature.rescale_factor = 0.5;           % rescaling factor of the original image for speed
 vo_params.feature.nms_n = 3;                      % non-max-suppression: min. distance between maxima (in pixels)
 vo_params.feature.nms_tau = 50;                   % non-max-suppression: interest point peakiness threshold
-vo_params.feature.margin = 10;                    % leaving margin for safety while computing features ( > 5)
+vo_params.feature.margin = 12;                    % leaving margin for safety while computing features ( > 5)
 
 %% Parameters for Feature Matching
 vo_params.matcher.match_binsize = 50;             % matching bin width/height (affects efficiency only)
 vo_params.matcher.match_radius = 200;             % matching radius (du/dv in pixels)
 vo_params.matcher.match_disp_tolerance = 2;       % dv tolerance for stereo matches (in pixels)
-vo_params.matcher.ransac_iters = 500;             % number of iteratios for RANSAC
-vo_params.matcher.outlier_disp_tolerance = 5;     % outlier removal: disparity tolerance (in pixels)
-vo_params.matcher.outlier_flow_tolerance = 5;     % outlier removal: flow tolerance (in pixels)
+vo_params.matcher.match_ncc_window = 25;          % window size of the patch for normalized cross-correlation
+vo_params.matcher.match_ncc_tolerance = 0.75;     % threshold for normalized cross-correlation
 vo_params.matcher.refinement = 1;                 % refinement (0=none,1=pixel,2=subpixel)
 
 %% Paramters for Feature Selection using bucketing
