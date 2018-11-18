@@ -29,8 +29,8 @@ width = dims(2);
 match_binsize = match_params.match_binsize;
 
 % calculate number of bins
-x_bin_num = floor(height/match_binsize);
-y_bin_num = floor(width/match_binsize);
+x_bin_num = ceil(height/match_binsize);
+y_bin_num = ceil(width/match_binsize);
 
 % create position/class bin index vectors
 bin_pos1_l = createIndexVector(pts1_l, match_binsize, x_bin_num, y_bin_num);
@@ -39,35 +39,42 @@ bin_pos2_l = createIndexVector(pts2_l, match_binsize, x_bin_num, y_bin_num);
 bin_pos2_r = createIndexVector(pts2_r, match_binsize, x_bin_num, y_bin_num);
 
 % initialize variables
-matches = struct('pt1_l', {}, 'pt1_r', {}, 'pt2_l', {}, 'pt2_r', {});
-num = 0;
+matches2_r = NaN(size(pts1_l, 2), 1);
+matches1_r = NaN(size(pts1_l, 2), 1);
+matches1_l = NaN(size(pts1_l, 2), 1);
+matches2_l = NaN(size(pts1_l, 2), 1);
 
 % iterate over all keypoints observations
-for i1_l = 1 : size(pts1_l, 2)
+pts1_l_copy = pts1_l;
+parfor i1_l = 1 : size(pts1_l, 2)
     % match in circle
     % a) left frame at t-1 with right frame at t-1
     [i1_r, validity] = findMatch(pts1_l(i1_l), pts1_r, bin_pos1_r, x_bin_num, y_bin_num, match_params, 0);
     if not(validity)
         continue;
     end
+
     % b) right frame at t-1 with right frame at t
     [i2_r, validity] = findMatch(pts1_r(i1_r), pts2_r, bin_pos2_r, x_bin_num, y_bin_num, match_params, 1);
     if not(validity)
         continue;
     end
+
     % c) right frame at t with left frame at t
    [i2_l, validity] = findMatch(pts2_r(i2_r), pts2_l, bin_pos2_l, x_bin_num, y_bin_num, match_params, 0);
     if not(validity)
         continue;
     end
+
     % d) left frame at t with left frame at t-1
-    [i1_l2, validity] = findMatch(pts2_l(i2_l), pts1_l, bin_pos1_l, x_bin_num, y_bin_num, match_params, 1);
+    [i1_l2, validity] = findMatch(pts2_l(i2_l), pts1_l_copy, bin_pos1_l, x_bin_num, y_bin_num, match_params, 1);
     if not(validity)
         continue;
     end
-    
+
     % if succcessfull circular matching
     if(i1_l == i1_l2)
+
         % retrieve all image coordinates of matched feature points
         m_pt1_l =  pts1_l(i1_l).location;
         m_pt2_l =  pts2_l(i2_l).location;
@@ -79,23 +86,30 @@ for i1_l = 1 : size(pts1_l, 2)
         disp2 = m_pt2_l(2) - m_pt2_r(2);
       
         % if disparities are positive
-        if (disp1 > 0 && disp2 > 0)
-            % pull matches to the same scanline
-            % for time t-1
-            m_pt1_l(1) = (m_pt1_l(1) + m_pt1_r(1)) / 2;
-            m_pt1_r(1) = m_pt1_l(1);
-            % for time t
-            m_pt2_l(1) = (m_pt2_l(1) + m_pt2_r(1)) / 2;
-            m_pt2_r(1) = m_pt2_l(1);
-            
+        if (disp1 >= 0 && disp2 >= 0)
             % add match
-            num = num + 1;
-            matches(num).pt1_l = m_pt1_l;
-            matches(num).pt2_l = m_pt2_l;
-            matches(num).pt1_r = m_pt1_r;
-            matches(num).pt2_r = m_pt2_r;
+            matches1_l(i1_l) = i1_l;
+            matches1_r(i1_l) = i1_r;
+            matches2_l(i1_l) = i2_l;
+            matches2_r(i1_l) = i2_r;
+
         end
     end
 end
-    
+
+% remove nan values from arrays
+matches2_r(isnan(matches2_r)) = [];
+matches1_r(isnan(matches1_r)) = [];
+matches2_l(isnan(matches2_l)) = [];
+matches1_l(isnan(matches1_l)) = [];
+
+% allocate positions of the matches into required array of structure
+matches = struct('pt1_l', {}, 'pt1_r', {}, 'pt2_l', {}, 'pt2_r', {});
+for i = 1:length(matches1_l)
+    matches(i).pt1_l = pts1_l(matches1_l(i)).location;
+    matches(i).pt1_r = pts1_r(matches1_r(i)).location;
+    matches(i).pt2_l = pts2_l(matches2_l(i)).location;
+    matches(i).pt2_r = pts2_r(matches2_r(i)).location;
+end
+
 end

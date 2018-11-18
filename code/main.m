@@ -7,6 +7,13 @@ addpath('config');
 addpath(genpath('functions'));
 configFile;
 
+%% Starting parallel pooling (requires Parallel Processing Toolbox)
+% This section takes a while to load for the first time
+% To shutdown, run: delete(gcp('nocreate'));
+if (isempty(gcp) && data_params.use_multithreads)
+    parpool();
+end
+
 %% Read directories containing images
 img_files1 = dir(strcat(data_params.path1,'*.png'));
 img_files2 = dir(strcat(data_params.path2,'*.png'));
@@ -50,10 +57,12 @@ for t = 1 : num_of_images
     % used for visualization of flow only
     I1_l = imread([img_files1(t+1).folder, '/', img_files1(t-1).name]);
     I1_l = imresize(I1_l,  vo_params.feature.rescale_factor);
+    I1_r = imread([img_files2(t+1).folder, '/', img_files2(t-1).name]);
+    I1_r = imresize(I1_r,  vo_params.feature.rescale_factor);   
     
     %% Implement SOFT for time instant t+1
     tic;
-    [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I2_r, P1, P2, vo_params, vo_previous);
+    [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I1_r, I2_r, P1, P2, vo_params, vo_previous);
     toc
 
     %% Estimated pose relative to global frame at t = 0
