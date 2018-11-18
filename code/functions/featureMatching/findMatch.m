@@ -13,7 +13,6 @@ function [min_ind, validity] = findMatch(keypt1, keypts2, bin_pos2, x_bin_num, y
 %       - match_binsize: matching bin width/height (for computation efficiency)
 %       - match_radius: matching radius (du/dv in pixels)
 %       - match_disp_tolerance: dv tolerance for stereo matches (in pixels)
-%       - match_uniqueness: ratio between best and second best match
 %   - flow: flag to consider optical flow (for stereo setting, set flow:  0)
 %
 % OUTPUT:
@@ -24,7 +23,6 @@ function [min_ind, validity] = findMatch(keypt1, keypts2, bin_pos2, x_bin_num, y
 match_binsize = match_params.match_binsize;
 match_radius = match_params.match_radius;
 match_disp_tolerance = match_params.match_disp_tolerance;
-match_uniqueness = match_params.match_uniqueness;
 
 % extract information of feature being considered
 pt1 = keypt1.location;
@@ -45,10 +43,10 @@ if not(flow)
 end
 
 % bins of interest
-x_bin_min = min( max( floor(x_min/match_binsize), 0), x_bin_num - 1) + 1;
-x_bin_max = min( max( floor(x_max/match_binsize), 0), x_bin_num - 1) + 1;
-y_bin_min = min( max( floor(y_min/match_binsize), 0), y_bin_num - 1) + 1;
-y_bin_max = min( max( floor(y_max/match_binsize), 0), y_bin_num - 1) + 1;
+x_bin_min = min( max( ceil(x_min/match_binsize), 1), x_bin_num);
+x_bin_max = min( max( ceil(x_max/match_binsize), 1), x_bin_num);
+y_bin_min = min( max( ceil(y_min/match_binsize), 1), y_bin_num);
+y_bin_max = min( max( ceil(y_max/match_binsize), 1), y_bin_num);
 
 % consider keypoints in image 2 present in the bins of interest
 in2 = horzcat(bin_pos2{x_bin_min:x_bin_max, y_bin_min:y_bin_max, c});
@@ -81,16 +79,8 @@ descr2_all = horzcat(keypts2(valid_in2).descriptor);
 dists = pdist2(double(descr1'), double(descr2_all'), 'cityblock');
 
 % find keypoint in image2 associated with minimum cost
-[min_cost_1, index] = min(dists);
-min_ind = valid_in2(index);
-                         
-% check uniqueness criterion by comparing least cost to second least cost
-min_cost_2 = min( setdiff( dists, min_cost_1));
-if ( min_cost_1 <= match_uniqueness * min_cost_2)
-    validity = true;
-else
-    min_ind = -1;
-    validity = false;
-end
+[~, indices] = sort(dists, 'ascend');
+min_ind = valid_in2(indices(1));
+validity = true;
 
 end
