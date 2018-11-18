@@ -104,12 +104,13 @@ matches2_l(isnan(matches2_l)) = [];
 matches1_l(isnan(matches1_l)) = [];
 
 % allocate positions of the matches into required array of structure
-matches = struct('pt1_l', {}, 'pt1_r', {}, 'pt2_l', {}, 'pt2_r', {});
+matches = cell(1, length(matches1_l));
 for i = 1:length(matches1_l)
-    matches(i).pt1_l = pts1_l(matches1_l(i)).location;
-    matches(i).pt1_r = pts1_r(matches1_r(i)).location;
-    matches(i).pt2_l = pts2_l(matches2_l(i)).location;
-    matches(i).pt2_r = pts2_r(matches2_r(i)).location;
+    matches{i}.pt1_l = pts1_l(matches1_l(i));
+    matches{i}.pt1_r = pts1_r(matches1_r(i));
+    matches{i}.pt2_l = pts2_l(matches2_l(i));
+    matches{i}.pt2_r = pts2_r(matches2_r(i));
 end
+matches = cell2mat(matches);
 
 end

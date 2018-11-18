@@ -10,10 +10,10 @@ function cleaned_matches = removeOutliers(I1_l, I1_r, matches, match_params)
 %   - I1_l: left image for time t-1
 %   - I1_r: right images for time t-1
 %   - matches (1,N): strcutre of matched points
-%       - pt1_l(2): location of keypoint in left image at time t-1
-%       - pt1_r(2): location of keypoint in right image at time t-1
-%       - pt2_l(2): location of keypoint in left image at time t
-%       - pt2_r(2): location of keypoint in right image at time t
+%       - pt1_l: keypoint in left image at time t-1
+%       - pt1_r: keypoint in right image at time t-1
+%       - pt2_l: keypoint in left image at time t
+%       - pt2_r: keypoint in right image at time t
 %   - match_params: structure comprising of following
 %       - match_ncc_window: window size of the patch for normalized cross-correlation
 %       - match_ncc_tolerance: threshold for normalized cross-correlation
@@ -22,10 +22,10 @@ function cleaned_matches = removeOutliers(I1_l, I1_r, matches, match_params)
 %
 % OUTPUT:
 %   - cleaned_matches(1, N2): processed structure of matched points
-%       - pt1_l(2): location of keypoint in left image at time t-1
-%       - pt1_r(2): location of keypoint in right image at time t-1
-%       - pt2_l(2): location of keypoint in left image at time t
-%       - pt2_r(2): location of keypoint in right image at time t
+%       - pt1_l: location of keypoint in left image at time t-1
+%       - pt1_r: location of keypoint in right image at time t-1
+%       - pt2_l: location of keypoint in left image at time t
+%       - pt2_r: location of keypoint in right image at time t
 
 % initialize parameters
 ncc_window = match_params.match_ncc_window;
@@ -41,7 +41,7 @@ valid_match_indices = ones(length(matches), 1, 'logical');
 parfor i = 1:length(matches)
     match = matches(i);
     % verify match by computing NCC score
-    validity = verifyMatchNCC(I1_l, I1_r, match.pt1_l, match.pt1_r, ...
+    validity = verifyMatchNCC(I1_l, I1_r, match.pt1_l.location, match.pt1_r.location, ...
                               ncc_window, ncc_tolerance);
     % if not valid, remove the match
     if not(validity)
@@ -56,14 +56,20 @@ matches = matches(valid_match_indices);
 % store positions of matches at time t-1
 m_pts1_l = vertcat(matches(:).pt1_l);
 m_pts1_r = vertcat(matches(:).pt1_r);
+location1_l = vertcat(m_pts1_l(:).location); 
+location1_r = vertcat(m_pts1_r(:).location);
+
+% invert x-y corrdinates for image processing tooblox
+im_location1_l = [location1_l(:, 2), location1_l(:, 1)];
+im_location1_r = [location1_r(:, 2), location1_r(:, 1)];
 
 % use MATLAB function to find inliers using MSAC
-[~, inliers1_l, ~] = estimateGeometricTransform(m_pts1_l, m_pts1_r, 'affine', ...
+[~, inliers1_l, ~] = estimateGeometricTransform(im_location1_l, im_location1_r, 'affine', ...
                                                 'MaxDistance', outlier_disp_tolerance, ...
                                                 'MaxNumTrials', ransac_iters);
 
 % find indices of valid matches
-[~, valid_match_indices] = ismember(inliers1_l, m_pts1_l, 'rows');
+[~, valid_match_indices] = ismember(inliers1_l, im_location1_l, 'rows');
 
 % cleaned matched points after MSAC
 cleaned_matches = matches(valid_match_indices);

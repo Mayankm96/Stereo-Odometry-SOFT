@@ -25,10 +25,10 @@ for i = 1:num
     y = keypts(i).location(2);
     c = keypts(i).class;
     % find bin position
-    bin_x = min(floor(x/match_binsize), x_bin_num - 1) + 1;
-    bin_y = min(floor(y/match_binsize), y_bin_num - 1) + 1;
+    bin_x = min(ceil(x/match_binsize), x_bin_num);
+    bin_y = min(ceil(y/match_binsize), y_bin_num);
     % add keypoint index to corresponding bin_pos
-    bin_pos{bin_x, bin_y, c} = horzcat(bin_pos{bin_x, bin_y, c}, int32(i));
+    bin_pos{bin_x, bin_y, c} = horzcat(bin_pos{bin_x, bin_y, c}, i);
 end
 
 end

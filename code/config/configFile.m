@@ -31,7 +31,7 @@ cam_params.base = 3.875744e+02;                   % baseline in meters (absolute
 vo_params.feature.rescale_factor = 0.5;           % rescaling factor of the original image for speed
 vo_params.feature.nms_n = 3;                      % non-max-suppression: min. distance between maxima (in pixels)
 vo_params.feature.nms_tau = 50;                   % non-max-suppression: interest point peakiness threshold
-vo_params.feature.margin = 12;                    % leaving margin for safety while computing features ( > 5)
+vo_params.feature.margin = 12;                    % leaving margin for safety while computing features ( > 12)
 
 %% Parameters for Feature Matching
 vo_params.matcher.match_binsize = 50;             % matching bin width/height (affects efficiency only)

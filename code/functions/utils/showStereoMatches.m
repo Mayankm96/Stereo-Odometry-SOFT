@@ -30,15 +30,15 @@ num = 0;
 for match = matches
     num = num + 1;
     if(current_time_flag)
-        x_from(num) = match.pt2_r(1);
-        x_to(num)   = match.pt2_l(1);
-        y_from(num) = match.pt2_r(2);
-        y_to(num)   = match.pt2_l(2);
+        x_from(num) = match.pt2_r.location(1);
+        x_to(num)   = match.pt2_l.location(1);
+        y_from(num) = match.pt2_r.location(2);
+        y_to(num)   = match.pt2_l.location(2);
     else
-        x_from(num) = match.pt1_r(1);
-        x_to(num)   = match.pt1_l(1);
-        y_from(num) = match.pt1_r(2);
-        y_to(num)   = match.pt1_l(2);
+        x_from(num) = match.pt1_r.location(1);
+        x_to(num)   = match.pt1_l.location(1);
+        y_from(num) = match.pt1_r.location(2);
+        y_to(num)   = match.pt1_l.location(2);
     end
 end
 
