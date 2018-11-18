@@ -86,7 +86,7 @@ parfor i1_l = 1 : size(pts1_l, 2)
         disp2 = m_pt2_l(2) - m_pt2_r(2);
 
         % if disparities are positive
-        if (disp1 >= 0 && disp2 >= 0)
+        if (disp1 > 0 && disp2 > 0)
             % add match
             matches1_l(i1_l) = i1_l;
             matches1_r(i1_l) = i1_r;

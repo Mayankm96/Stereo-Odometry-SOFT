@@ -38,8 +38,8 @@ y_max = y1 + match_radius;
 
 % if stereo search, constrain to 1d since inputs are rectified
 if not(flow)
-    y_min = y1 - match_disp_tolerance;
-    y_max = y1 + match_disp_tolerance;
+    x_min = x1 - match_disp_tolerance;
+    x_max = x1 + match_disp_tolerance;
 end
 
 % bins of interest
