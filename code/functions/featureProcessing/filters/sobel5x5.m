@@ -16,13 +16,11 @@ sobel_kernel2 = [1, 2, 0, -2, -1];
 divisor = 48;
 
 % gradient along x
-I_dx = conv2(img, sobel_kernel1, 'valid');
-I_dx = conv2(I_dx, sobel_kernel2', 'valid');
+I_dx = conv2(sobel_kernel2', sobel_kernel1, img, 'valid');
 I_dx = uint8(I_dx / divisor + 128);
 
 % gradient along y
-I_dy = conv2(img, sobel_kernel1', 'valid');
-I_dy = conv2(I_dy, sobel_kernel2, 'valid');
+I_dy = conv2(sobel_kernel1', sobel_kernel2, img, 'valid');
 I_dy = uint8(I_dy / divisor + 128);
 
 % imshowpair(I_dx, I_dy, 'montage');

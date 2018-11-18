@@ -12,8 +12,8 @@ function matches = matchFeaturePoints(pts1_l, pts2_l, pts1_r, pts2_r, dims, matc
 %       - match_binsize: matching bin width/height (for computation efficiency)
 %       - match_radius: matching radius (dx/dy in pixels)
 %       - match_disp_tolerance: dv tolerance for stereo matches (in pixels)
-%       - match_uniqueness: ratio between best and second best match
 %       - refinement: pixel location refinement (0=none,1=pixel,2=subpixel)
+%       - ransac_iters: number of iterations for RANSAC
 %
 % OUTPUT:
 %   - matches: array of structure of matched points across four images
@@ -28,5 +28,5 @@ matches = performCircularMatching(pts1_l, pts2_l, pts1_r, pts2_r, dims, match_pa
 % perform refinement
 
 % remove outliers using RANSAC
-
+% matches = removeOutliers(matches, match_params.ransac_iters);
 end

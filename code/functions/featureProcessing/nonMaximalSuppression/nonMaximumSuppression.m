@@ -1,4 +1,4 @@
-function [keypoints, num] = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
+function [keypoints, num] = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau, margin)
 %NONMAXIMUMSUPPRESION Extracting corner and blob feature points 
 % Non-maximum- and non-minimum-suppression are employed over the
 % filtered images, resulting in feature candidates which belong
@@ -13,14 +13,12 @@ function [keypoints, num] = nonMaximumSuppression(I_f1, I_f2, nms_n, nms_tau)
 %   - I_f2: output of filtered image of checkerboard kernel
 %   - nms_n: min. distance between maxima (in pixels)
 %   - nms_tau: interest point peakiness threshold
+%   - margin: leaving margin for safety 
 %
 % OUTPUT:
 %   - keypoints(1, N): keypoints detected. 
 %                   Each keypoints has: (location(x, y), value, class)
 %   - num: Number of keypoints detected
-
-% leaving margin for safety 
-margin = 9;
 
 % size of image
 [height, width] = size(I_f1);
