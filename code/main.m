@@ -53,6 +53,7 @@ for t = 1 : num_of_images
         continue;
     end
     
+    fprintf('Frame: %i\t', t);
     %% Read image for time instant t-1 
     % used for visualization of flow only
     I1_l = imread([img_files1(t+1).folder, '/', img_files1(t-1).name]);
@@ -61,16 +62,15 @@ for t = 1 : num_of_images
     I1_r = imresize(I1_r,  vo_params.feature.rescale_factor);   
     
     %% Implement SOFT for time instant t+1
-    tic;
     [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I1_r, I2_r, P1, P2, vo_params, vo_previous);
-    toc
-
+   
     %% Estimated pose relative to global frame at t = 0
     pos = pos + Rpos * tr';
-    Rpos = R * Rpos;
-
+    Rpos = R * Rpos;    
+    
     %% Plot the odometry transformed data
-    subplot(2, 2 , [2 4]);
+    figure(1);
+    subplot(2, 2, [2, 4]);
     scatter( - pos(1), pos(3), 'b', 'filled');
     hold on;
     title(sprintf('Odometry plot at frame %d', t))
@@ -86,4 +86,5 @@ for t = 1 : num_of_images
     end
     %% Pause to visualize the plot
     pause(0.0001);
+    fprintf('\n ---------------- \n');
 end
