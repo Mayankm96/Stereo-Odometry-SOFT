@@ -39,6 +39,8 @@ vo_params.matcher.match_radius = 200;             % matching radius (du/dv in pi
 vo_params.matcher.match_disp_tolerance = 2;       % dv tolerance for stereo matches (in pixels)
 vo_params.matcher.match_ncc_window = 25;          % window size of the patch for normalized cross-correlation
 vo_params.matcher.match_ncc_tolerance = 0.75;     % threshold for normalized cross-correlation
+vo_params.matcher.ransac_iters = 500;             % number of iteratios for RANSAC
+vo_params.matcher.outlier_disp_tolerance = 5;     % outlier removal: disparity tolerance (in pixels)
 vo_params.matcher.refinement = 1;                 % refinement (0=none,1=pixel,2=subpixel)
 
 %% Paramters for Feature Selection using bucketing

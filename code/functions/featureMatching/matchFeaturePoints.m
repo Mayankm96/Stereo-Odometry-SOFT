@@ -17,8 +17,9 @@ function matches = matchFeaturePoints(I1_l, I1_r, ...
 %       - match_radius: matching radius (dx/dy in pixels)
 %       - match_ncc_window: window size of the patch for normalized cross-correlation
 %       - match_ncc_tolerance: threshold for normalized cross-correlation
+%       - ransac_iters: number of iteratios for RANSAC
+%       - outlier_disp_tolerance: disparity tolerance (in pixels)
 %       - refinement: pixel location refinement (0=none,1=pixel,2=subpixel)
-%       - ransac_iters: number of iterations for RANSAC
 %
 % OUTPUT:
 %   - matches: array of structure of matched points across four images
@@ -29,9 +30,10 @@ function matches = matchFeaturePoints(I1_l, I1_r, ...
 
 % perform circular matching
 matches = performCircularMatching(pts1_l, pts2_l, pts1_r, pts2_r, dims, match_params);
+fprintf('Matches: %i\t', length(matches));
 
 % remove certain outliers using NCC    
 matches = removeOutliers(I1_l, I1_r, matches, match_params);
+fprintf('Inliers: %i\n', length(matches));
 
-% perform refinement
 end
