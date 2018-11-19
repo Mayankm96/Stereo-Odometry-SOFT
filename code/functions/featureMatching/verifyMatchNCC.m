@@ -14,10 +14,15 @@ function validity = verifyMatchNCC(I1, I2, pt1, pt2, template_size, threshold)
 %   - validity: true if the NCC score is above threshold
 
 % templates
-template1 = I1(ceil(pt1(1) - template_size/2) : ceil(pt1(1) + template_size/2), ...
-           ceil(pt1(2) - template_size/2) : ceil(pt1(2) + template_size/2));
-template2 = I2(ceil(pt2(1) - template_size/2) : ceil(pt2(1) + template_size/2), ...
-           ceil(pt2(2) - template_size/2) : ceil(pt2(2) + template_size/2));
+template1 = double(I1(ceil(pt1(1) - template_size/2) : ceil(pt1(1) + template_size/2), ...
+           ceil(pt1(2) - template_size/2) : ceil(pt1(2) + template_size/2)));
+template2 = double(I2(ceil(pt2(1) - template_size/2) : ceil(pt2(1) + template_size/2), ...
+           ceil(pt2(2) - template_size/2) : ceil(pt2(2) + template_size/2)));
+
+if std(template2(:)) == 0 || std(template1(:)) == 0
+    validity = false;
+    return;
+end
 
 score = normxcorr2(template1, template2);
 
