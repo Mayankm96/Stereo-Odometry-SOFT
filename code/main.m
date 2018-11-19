@@ -41,36 +41,33 @@ for t = 1 : num_of_images
     %% Read images for time instant t
     I2_l = imread([img_files1(t+1).folder, '/', img_files1(t).name]);
     I2_r = imread([img_files2(t+1).folder, '/', img_files2(t).name]);
-    % resize image to make algorithm faster
-    I2_l = imresize(I2_l,  vo_params.feature.rescale_factor);
-    I2_r = imresize(I2_r,  vo_params.feature.rescale_factor);
+    fprintf('Frame: %i\n', t);
 
     %% Bootstraping for initialization
     if (start == 0)
         vo_previous.pts1_l = computeFeatures(I2_l, vo_params.feature);
         vo_previous.pts1_r = computeFeatures(I2_r, vo_params.feature);
         start = 1;
+        I1_l = I2_l;
+        I1_r = I2_r;
+        fprintf('\n---------------------------------\n');
         continue;
     end
-    
-    fprintf('Frame: %i\n', t);
-    %% Read image for time instant t-1 
-    % used for visualization of flow only
-    I1_l = imread([img_files1(t+1).folder, '/', img_files1(t-1).name]);
-    I1_l = imresize(I1_l,  vo_params.feature.rescale_factor);
-    I1_r = imread([img_files2(t+1).folder, '/', img_files2(t-1).name]);
-    I1_r = imresize(I1_r,  vo_params.feature.rescale_factor);   
-    
+
     %% Implement SOFT for time instant t+1
-    [R, tr, vo_previous, landmarks] = visualSOFT(t, I1_l, I2_l, I1_r, I2_r, P1, P2, vo_params, vo_previous);
-   
+    [R, tr, vo_previous] = visualSOFT(t, I1_l, I2_l, I1_r, I2_r, P1, P2, vo_params, vo_previous);
+
     %% Estimated pose relative to global frame at t = 0
     pos = pos + Rpos * tr';
-    Rpos = R * Rpos;    
-    
+    Rpos = R * Rpos;
+
+    %% Prepare frames for next iteration
+    I1_l = I2_l;
+    I1_r = I2_r;
+
     %% Plot the odometry transformed data
-    subplot(3, 2, [2, 4, 6]);
-    
+    subplot(2, 2, [2, 4]);
+
     % Read ground truth pose if flag is true
     if data_params.show_gt_flag
       axis([gt_x_min gt_x_max gt_z_min gt_z_max])
@@ -83,22 +80,13 @@ for t = 1 : num_of_images
     title(sprintf('Odometry plot at frame %d', t))
     xlabel('x-axis (in meters)');
     ylabel('z-axis (in meters)');
-    
+
     if data_params.show_gt_flag
-        legend('Estimated Pose', 'Ground Truth Pose')
+        legend('Ground Truth Pose', 'Estimated Pose')
     else
         legend('Estimated Pose')
     end
-    
-    %% Plot detected landmarks
-    subplot(3, 2, 5);
-    scatter(landmarks(1, :), - landmarks(2, :), 'filled');
-    grid on;
-    xlim([-50 0])
-    ylim([0 20])
-    title(sprintf('Detected landmarks in camera frame at frame %d', t))
-    xlabel('x-axis (in meters)');
-    ylabel('y-axis (in meters)');
+
     %% Pause to visualize the plot
     pause(0.0001);
     fprintf('\n---------------------------------\n');

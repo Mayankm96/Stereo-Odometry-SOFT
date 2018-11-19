@@ -21,28 +21,24 @@ data_params.use_multithreads = 1;                % 0: disabled, 1: enabled
 % TO-DO: Read from the calib_file instead
 
 % calibration parameters for sequence 2010_03_09_drive_0000 
-cam_params.fx = 7.215377e+02;                     % focal length (u-coordinate) in pixels
-cam_params.cx = 6.095593e+02;                     % principal point (u-coordinate) in pixels
-cam_params.fy = 7.215377e+02;                     % focal length (v-coordinate) in pixels
-cam_params.cy = 1.728540e+02;                     % principal point (v-coordinate) in pixels
-cam_params.base = 3.875744e+02;                   % baseline in meters (absolute value)
+cam_params.fx = 7.188560000000e+02;               % focal length (u-coordinate) in pixels
+cam_params.cx = 6.071928000000e+02;               % principal point (u-coordinate) in pixels
+cam_params.fy = 7.188560000000e+02;               % focal length (v-coordinate) in pixels
+cam_params.cy = 1.852157000000e+02;               % principal point (v-coordinate) in pixels
+cam_params.base = 3.861448000000e+02;             % baseline in meters (absolute value)
 
 %% Parameters for Feature Extraction
-vo_params.feature.rescale_factor = 0.5;           % rescaling factor of the original image for speed
 vo_params.feature.nms_n = 5;                      % non-max-suppression: min. distance between maxima (in pixels)
 vo_params.feature.nms_tau = 50;                   % non-max-suppression: interest point peakiness threshold
-vo_params.feature.margin = 12;                    % leaving margin for safety while computing features ( > 12)
+vo_params.feature.margin = 25;                    % leaving margin for safety while computing features ( >= 25)
 
 %% Parameters for Feature Matching
 vo_params.matcher.match_binsize = 50;             % matching bin width/height (affects efficiency only)
 vo_params.matcher.match_radius = 200;             % matching radius (du/dv in pixels)
 vo_params.matcher.match_disp_tolerance = 1;       % dx tolerance for stereo matches (in pixels)
 vo_params.matcher.match_ncc_window = 25;          % window size of the patch for normalized cross-correlation
-vo_params.matcher.match_ncc_tolerance = 0.92;     % threshold for normalized cross-correlation
-vo_params.matcher.ransac_iters = 1000;            % number of iteratios for RANSAC
-vo_params.matcher.outlier_disp_tolerance = 5;     % outlier removal: disparity tolerance (in pixels)
-vo_params.matcher.outlier_flow_tolerance = 5;     % flow tolerance (in pixels)
-vo_params.matcher.refinement = 1;                 % refinement (0=none,1=pixel,2=subpixel)
+vo_params.matcher.match_ncc_tolerance = 0.85;     % threshold for normalized cross-correlation
+vo_params.matcher.refinement = 2;                 % refinement (0=none,1=pixel,2=subpixel)
 
 %% Paramters for Feature Selection using bucketing
 vo_params.bucketing.max_features = 2;             % maximal number of features per bucket 
