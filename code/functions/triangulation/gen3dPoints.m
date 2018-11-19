@@ -8,6 +8,9 @@ function points3D = gen3dPoints(pts_l, pts_r, P1, P2)
 %   - pts_r(N, 2): matched feature points locations in right camera frame
 %   - P1(3, 4): Projection matrix for 
 %   - P2(3, 4): Projection matrices for left and right cameras respectively
+%
+% OUTPUT:
+%   - points3D(3, N): 3-D locations of points in world coordinate system
 
 % invert x-y corrdinates for image processing tooblox
 im_pts1_l = [pts_l(:, 2), pts_l(:, 1)];
