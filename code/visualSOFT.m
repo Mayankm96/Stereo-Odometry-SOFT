@@ -20,7 +20,6 @@ function [R, tr, vo_previous_updated] = visualSOFT(t, I1_l, I2_l, I1_r, I2_r, P1
 %   - vo_previous_updated: structure containing certain data from time step t
 
 %% Initialize parameters
-K1 = P1(1:3, 1:3);      % intrinsic calibration matrix for left camera
 dims = size(I2_l);      % dimensions of image (height x width)
 time = zeros(4, 1);      % variable to store time taken by each step
 
@@ -45,22 +44,7 @@ bucketed_matches = bucketFeatures(matches, vo_params.bucketing);
 time(3) = toc;
 
 %% Rotation (R) and Translation(tr) Estimation by minimizing Reprojection Error
-m_pts1_l = horzcat(bucketed_matches(:).pt1_l);  location1_l = vertcat(m_pts1_l(:).location);
-m_pts1_r = horzcat(bucketed_matches(:).pt1_r);  location1_r = vertcat(m_pts1_r(:).location);
-m_pts2_l = horzcat(bucketed_matches(:).pt2_l);  location2_l = vertcat(m_pts2_l(:).location);
-
-% 3D Point Cloud generation at time t-1 using Triangulation
-tic;
-points3D_1 = gen3dPoints(location1_l, location1_r, P1, P2);
-
-% invert x-y corrdinates for image processing tooblox
-location2_l = [location2_l(:, 2), location2_l(:, 1)];
-
-% motion estimation by minimizing reprojection error and RANSAC
-cam1 = cameraIntrinsics([K1(1, 1), K1(2,2)], [K1(1, 3), K1(2, 3)], dims);
-[R, tr] = estimateWorldCameraPose(location2_l, points3D_1', cam1, 'MaxReprojectionError', 1.0);
-
-time(4) = toc;
+[R, tr] = updateMotionP3P(bucketed_matches, P1, P2, dims);
 
 %% plotting
 
